@@ -3,102 +3,1579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>石头剪刀布 - 联机对战</title>
+    <title>星烁游戏推广系统</title>
     <style>
+        /* 美观的UI样式 */
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
+            font-family: 'Arial', sans-serif;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
+            margin-bottom: 30px;
         }
-        #gameArea {
-            display: none;
-            margin-top: 20px;
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        #connectionArea {
-            margin: 20px 0;
-        }
-        .choice {
-            font-size: 50px;
-            margin: 0 15px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .choice:hover {
-            transform: scale(1.2);
-        }
-        #result {
-            font-size: 24px;
-            margin: 20px 0;
-            min-height: 36px;
-        }
-        #playerId {
-            font-weight: bold;
-            word-break: break-all;
-        }
-        #opponentId {
-            font-weight: bold;
-            word-break: break-all;
-            color: #d9534f;
-        }
-        #waiting {
-            display: none;
-            font-style: italic;
-            color: #666;
-        }
-        #gameLog {
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #5bc0de;
+        .btn {
+            background: #4CAF50;
             color: white;
             border: none;
+            padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
         }
-        input {
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: #6e8efb;
+        }
+        .btn-danger {
+            background: #f44336;
+        }
+        .btn-warning {
+            background: #ff9800;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        input, select {
             padding: 8px;
-            width: 200px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .qr-code {
+            max-width: 150px;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+        .task-card {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #6e8efb;
+        }
+        .status-pending {
+            color: #ff9800;
+        }
+        .status-approved {
+            color: #4CAF50;
+        }
+        .status-rejected {
+            color: #f44336;
+        }
+        .sync-status {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>石头剪刀布 - 联机对战</h1>
-    
-    <div id="connectionArea">
-        <button id="createGame">创建游戏</button>
-        <span>或</span>
-        <input type="text" id="joinGameId" placeholder="输入对方游戏ID">
-        <button id="joinGame">加入游戏</button>
+    <div class="header">
+        <h1>星烁游戏推广系统</h1>
+        <p>快手号: 4713343918 | 推广赚钱平台</p>
+        <div class="sync-status" id="syncStatus">同步状态: 本地</div>
     </div>
-    
-    <div id="waiting">等待对手连接...</div>
-    
-    <div id="gameArea">
-        <p>你的ID: <span id="playerId"></span></p>
-        <p>对手ID: <span id="opponentId"></span></p>
-        
-        <div id="choices">
-            <div class="choice" data-choice="✊">✊</div>
-            <div class="choice" data-choice="✌️">✌️</div>
-            <div class="choice" data-choice="✋">✋</div>
+
+    <div class="notification" id="notification"></div>
+
+    <div id="loginSection" class="card">
+        <h2>用户登录/注册</h2>
+        <input type="text" id="username" placeholder="用户名" required>
+        <input type="password" id="password" placeholder="密码" required>
+        <button class="btn btn-primary" onclick="login()">登录</button>
+        <button class="btn" onclick="register()">注册</button>
+        <div>
+            <p>或使用设备码登录:</p>
+            <input type="text" id="deviceCode" placeholder="输入设备码">
+            <button class="btn" onclick="loginWithDeviceCode()">设备登录</button>
+            <button class="btn" onclick="generateDeviceCode()" id="generateCodeBtn">生成设备码</button>
+            <div id="deviceCodeDisplay" style="display:none; margin-top:10px;">
+                <p>您的设备码: <strong id="generatedCode"></strong></p>
+                <p>有效期: 5分钟</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminSection" class="card" style="display:none;">
+        <h2>管理员面板</h2>
+        <div id="adminControls">
+            <button class="btn btn-primary" onclick="showUserList()">用户列表</button>
+            <button class="btn btn-primary" onclick="showTaskList()">任务管理</button>
+            <button class="btn btn-primary" onclick="showWithdrawals()">提现审核</button>
+            <button class="btn btn-primary" onclick="showSettings()">系统设置</button>
+            <button class="btn btn-warning" onclick="exportData()">导出数据</button>
+            <button class="btn btn-danger" onclick="importData()">导入数据</button>
+            <button class="btn" onclick="logout()">退出</button>
         </div>
         
-        <div id="result"></div>
-        
-        <div id="gameLog"></div>
+        <div id="adminContent"></div>
     </div>
-    
-    <!-- 加载PeerJS库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
-    <script src="game.js"></script>
+
+    <div id="userSection" class="card" style="display:none;">
+        <h2>用户面板</h2>
+        <div id="userInfo"></div>
+        <div id="taskList"></div>
+        <div id="withdrawalSection"></div>
+        <div id="userStats" class="card"></div>
+        <button class="btn" onclick="logout()">退出</button>
+    </div>
+
+    <script>
+        // 数据存储
+        let users = JSON.parse(localStorage.getItem('ks_promo_users')) || [];
+        let tasks = JSON.parse(localStorage.getItem('ks_promo_tasks')) || [
+            {
+                id: 1,
+                type: "下载作品",
+                reward: 5,
+                description: "下载指定快手作品",
+                links: [
+                    "https://v.kuaishou.com/2C2bXWB",
+                    "https://v.kuaishou.com/2B3koRE",
+                    "https://v.kuaishou.com/2AKRu3o",
+                    "https://v.kuaishou.com/2CaQ8T7"
+                ],
+                qrCode: "tmp_09755c2edb514ad4a492798ccaaaaf96.jpg",
+                active: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 2,
+                type: "关注账号",
+                reward: 0.1,
+                description: "关注星烁游戏快手账号",
+                account: "4713343918",
+                active: true,
+                createdAt: new Date().toISOString()
+            }
+        ];
+        let withdrawals = JSON.parse(localStorage.getItem('ks_promo_withdrawals')) || [];
+        let currentUser = null;
+        let deviceCodes = JSON.parse(localStorage.getItem('ks_promo_device_codes')) || [];
+        let syncChannel = null;
+        let lastSyncTime = localStorage.getItem('ks_promo_last_sync') || null;
+        let isOnline = navigator.onLine;
+
+        // 初始化
+        function init() {
+            // 检查是否有管理员，如果没有则创建默认管理员
+            if(users.length === 0) {
+                users.push({
+                    id: 1,
+                    username: "admin",
+                    password: "admin123",
+                    isAdmin: true,
+                    balance: 0,
+                    completedTasks: [],
+                    paymentInfo: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null
+                });
+                saveData();
+            }
+            
+            // 检查URL参数是否有自动登录token
+            const urlParams = new URLSearchParams(window.location.search);
+            const loginToken = urlParams.get('token');
+            
+            if(loginToken) {
+                const user = users.find(u => u.loginToken === loginToken);
+                if(user) {
+                    currentUser = user;
+                    user.lastLogin = new Date().toISOString();
+                    saveData();
+                    showUserPanel();
+                }
+            }
+            
+            // 设置BroadcastChannel用于跨标签页同步
+            setupSyncChannel();
+            
+            // 监听网络状态
+            window.addEventListener('online', handleNetworkChange);
+            window.addEventListener('offline', handleNetworkChange);
+            
+            // 清理过期的设备码
+            cleanupExpiredDeviceCodes();
+            
+            // 显示同步状态
+            updateSyncStatus();
+        }
+
+        // 设置同步通道
+        function setupSyncChannel() {
+            if(typeof BroadcastChannel !== 'undefined') {
+                syncChannel = new BroadcastChannel('ks_promo_sync');
+                
+                syncChannel.onmessage = (event) => {
+                    if(event.data.type === 'data_update') {
+                        loadDataFromLocalStorage();
+                        showNotification('数据已从其他标签页同步');
+                        
+                        if(currentUser) {
+                            // 刷新当前用户数据
+                            currentUser = users.find(u => u.id === currentUser.id);
+                            
+                            if(currentUser.isAdmin) {
+                                showAdminPanel();
+                            } else {
+                                showUserPanel();
+                            }
+                        }
+                    } else if(event.data.type === 'sync_request') {
+                        // 响应同步请求
+                        syncChannel.postMessage({
+                            type: 'sync_response',
+                            data: {
+                                users,
+                                tasks,
+                                withdrawals,
+                                deviceCodes
+                            }
+                        });
+                    } else if(event.data.type === 'sync_response') {
+                        // 处理同步响应
+                        mergeData(event.data.data);
+                        showNotification('数据已从其他设备同步');
+                    }
+                };
+            }
+        }
+
+        // 从本地存储加载数据
+        function loadDataFromLocalStorage() {
+            users = JSON.parse(localStorage.getItem('ks_promo_users')) || users;
+            tasks = JSON.parse(localStorage.getItem('ks_promo_tasks')) || tasks;
+            withdrawals = JSON.parse(localStorage.getItem('ks_promo_withdrawals')) || withdrawals;
+            deviceCodes = JSON.parse(localStorage.getItem('ks_promo_device_codes')) || deviceCodes;
+        }
+
+        // 合并数据
+        function mergeData(newData) {
+            // 合并用户数据
+            newData.users.forEach(newUser => {
+                const existingUser = users.find(u => u.id === newUser.id);
+                if(!existingUser) {
+                    users.push(newUser);
+                } else {
+                    // 保留最新数据
+                    if(new Date(newUser.lastLogin) > new Date(existingUser.lastLogin || 0)) {
+                        Object.assign(existingUser, newUser);
+                    }
+                }
+            });
+            
+            // 合并任务数据
+            newData.tasks.forEach(newTask => {
+                const existingTask = tasks.find(t => t.id === newTask.id);
+                if(!existingTask) {
+                    tasks.push(newTask);
+                } else {
+                    // 保留最新修改的任务
+                    if(new Date(newTask.createdAt) > new Date(existingTask.createdAt || 0)) {
+                        Object.assign(existingTask, newTask);
+                    }
+                }
+            });
+            
+            // 合并提现数据
+            newData.withdrawals.forEach(newWithdrawal => {
+                const existingWithdrawal = withdrawals.find(w => w.id === newWithdrawal.id);
+                if(!existingWithdrawal) {
+                    withdrawals.push(newWithdrawal);
+                } else {
+                    // 保留最新状态
+                    if(new Date(newWithdrawal.date) > new Date(existingWithdrawal.date || 0)) {
+                        Object.assign(existingWithdrawal, newWithdrawal);
+                    }
+                }
+            });
+            
+            // 合并设备码
+            newData.deviceCodes.forEach(newCode => {
+                const existingCode = deviceCodes.find(c => c.code === newCode.code);
+                if(!existingCode) {
+                    deviceCodes.push(newCode);
+                }
+            });
+            
+            saveData();
+            lastSyncTime = new Date().toISOString();
+            localStorage.setItem('ks_promo_last_sync', lastSyncTime);
+            updateSyncStatus();
+        }
+
+        // 保存数据
+        function saveData() {
+            localStorage.setItem('ks_promo_users', JSON.stringify(users));
+            localStorage.setItem('ks_promo_tasks', JSON.stringify(tasks));
+            localStorage.setItem('ks_promo_withdrawals', JSON.stringify(withdrawals));
+            localStorage.setItem('ks_promo_device_codes', JSON.stringify(deviceCodes));
+            
+            // 通知其他标签页
+            if(syncChannel) {
+                syncChannel.postMessage({type: 'data_update'});
+            }
+            
+            updateSyncStatus();
+        }
+
+        // 更新同步状态显示
+        function updateSyncStatus() {
+            const statusElement = document.getElementById('syncStatus');
+            if(lastSyncTime) {
+                statusElement.textContent = `同步状态: 已同步 (${new Date(lastSyncTime).toLocaleTimeString()})`;
+                statusElement.style.color = '#4CAF50';
+            } else {
+                statusElement.textContent = '同步状态: 本地';
+                statusElement.style.color = '#ff9800';
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, duration);
+        }
+
+        // 处理网络状态变化
+        function handleNetworkChange() {
+            isOnline = navigator.onLine;
+            if(isOnline) {
+                showNotification('网络已连接');
+            } else {
+                showNotification('网络已断开', 5000);
+            }
+        }
+
+        // 清理过期的设备码
+        function cleanupExpiredDeviceCodes() {
+            const now = new Date();
+            deviceCodes = deviceCodes.filter(code => {
+                return new Date(code.expiresAt) > now;
+            });
+            saveData();
+        }
+
+        // 生成设备码
+        function generateDeviceCode() {
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5分钟后过期
+            
+            deviceCodes.push({
+                code,
+                userId: currentUser ? currentUser.id : null,
+                expiresAt: expiresAt.toISOString(),
+                createdAt: new Date().toISOString()
+            });
+            
+            saveData();
+            
+            document.getElementById('generatedCode').textContent = code;
+            document.getElementById('deviceCodeDisplay').style.display = 'block';
+            document.getElementById('generateCodeBtn').disabled = true;
+            
+            // 5分钟后重置
+            setTimeout(() => {
+                document.getElementById('deviceCodeDisplay').style.display = 'none';
+                document.getElementById('generateCodeBtn').disabled = false;
+            }, 5 * 60 * 1000);
+        }
+
+        // 使用设备码登录
+        function loginWithDeviceCode() {
+            const code = document.getElementById('deviceCode').value.trim();
+            if(!code) {
+                alert("请输入设备码");
+                return;
+            }
+            
+            const now = new Date();
+            const deviceCode = deviceCodes.find(c => c.code === code && new Date(c.expiresAt) > now);
+            
+            if(!deviceCode) {
+                alert("无效或过期的设备码");
+                return;
+            }
+            
+            if(deviceCode.userId) {
+                // 关联用户的设备码
+                const user = users.find(u => u.id === deviceCode.userId);
+                if(user) {
+                    currentUser = user;
+                    user.lastLogin = new Date().toISOString();
+                    saveData();
+                    
+                    if(user.isAdmin) {
+                        showAdminPanel();
+                    } else {
+                        showUserPanel();
+                    }
+                    
+                    // 移除已使用的设备码
+                    deviceCodes = deviceCodes.filter(c => c.code !== code);
+                    saveData();
+                    return;
+                }
+            }
+            
+            // 匿名设备码，显示登录界面
+            document.getElementById('deviceCode').value = '';
+            alert("请输入用户名和密码登录");
+        }
+
+        // 登录
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if(user) {
+                currentUser = user;
+                user.lastLogin = new Date().toISOString();
+                
+                // 生成登录token用于跨设备
+                user.loginToken = Math.random().toString(36).substring(2);
+                saveData();
+                
+                if(user.isAdmin) {
+                    showAdminPanel();
+                } else {
+                    showUserPanel();
+                }
+                
+                // 清除登录表单
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                alert("用户名或密码错误");
+            }
+        }
+
+        // 注册
+        function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if(!username || !password) {
+                alert("请输入用户名和密码");
+                return;
+            }
+            
+            if(username.length < 4 || password.length < 6) {
+                alert("用户名至少4位，密码至少6位");
+                return;
+            }
+            
+            if(users.some(u => u.username === username)) {
+                alert("用户名已存在");
+                return;
+            }
+            
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                username,
+                password,
+                isAdmin: false,
+                balance: 0,
+                completedTasks: [],
+                paymentInfo: null,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            saveData();
+            alert("注册成功，请登录");
+        }
+
+        // 显示管理员面板
+        function showAdminPanel() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'block';
+            
+            showUserList();
+        }
+
+        // 显示用户面板
+        function showUserPanel() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'block';
+            
+            // 显示用户信息
+            document.getElementById('userInfo').innerHTML = `
+                <h3>用户信息</h3>
+                <p>用户名: ${currentUser.username}</p>
+                <p>余额: ${currentUser.balance.toFixed(2)}元</p>
+                <p>注册日期: ${new Date(currentUser.createdAt).toLocaleDateString()}</p>
+                <p>最后登录: ${new Date(currentUser.lastLogin).toLocaleString()}</p>
+                <p>已完成任务: ${currentUser.completedTasks.length}个</p>
+                
+                <h3>绑定提现账户</h3>
+                ${
+                    currentUser.paymentInfo 
+                    ? `<p>已绑定: ${currentUser.paymentInfo.type} - ${currentUser.paymentInfo.account}</p>
+                       <button class="btn" onclick="unbindPayment()">解绑</button>`
+                    : `<div>
+                        <select id="paymentType">
+                            <option value="alipay">支付宝</option>
+                            <option value="wechat">微信支付</option>
+                            <option value="bank">银行卡</option>
+                        </select>
+                        <input type="text" id="paymentAccount" placeholder="账户号码">
+                        <input type="text" id="paymentName" placeholder="账户姓名">
+                        <button class="btn" onclick="bindPayment()">绑定</button>
+                    </div>`
+                }
+            `;
+            
+            // 显示用户统计
+            showUserStats();
+            
+            // 显示任务列表
+            showUserTasks();
+            
+            // 显示提现部分
+            showWithdrawalUI();
+        }
+
+        // 显示用户统计
+        function showUserStats() {
+            const completedCount = currentUser.completedTasks.length;
+            const totalEarned = currentUser.completedTasks.reduce((sum, task) => {
+                const taskInfo = tasks.find(t => t.id === task.taskId);
+                return sum + (taskInfo ? taskInfo.reward : 0);
+            }, 0);
+            
+            const today = new Date().toLocaleDateString();
+            const todayTasks = currentUser.completedTasks.filter(task => {
+                return new Date(task.date).toLocaleDateString() === today;
+            }).length;
+            
+            document.getElementById('userStats').innerHTML = `
+                <h3>统计信息</h3>
+                <p>今日完成任务: ${todayTasks}个</p>
+                <p>累计完成任务: ${completedCount}个</p>
+                <p>累计收益: ${totalEarned.toFixed(2)}元</p>
+                <p>已提现金额: ${calculateWithdrawnAmount().toFixed(2)}元</p>
+            `;
+        }
+
+        // 计算已提现金额
+        function calculateWithdrawnAmount() {
+            return withdrawals
+                .filter(w => w.userId === currentUser.id && w.status === '已批准')
+                .reduce((sum, w) => sum + w.amount, 0);
+        }
+
+        // 显示用户任务
+        function showUserTasks() {
+            let taskHtml = '<h3>推广任务</h3>';
+            
+            if(tasks.filter(t => t.active).length === 0) {
+                taskHtml += '<p>当前没有可用任务</p>';
+            } else {
+                tasks.filter(t => t.active).forEach(task => {
+                    const isCompleted = currentUser.completedTasks.some(t => t.taskId === task.id);
+                    const completionCount = currentUser.completedTasks.filter(t => t.taskId === task.id).length;
+                    const maxCompletions = task.maxCompletions || Infinity;
+                    
+                    taskHtml += `
+                        <div class="task-card">
+                            <h4>${task.type} - 奖励: ${task.reward.toFixed(2)}元</h4>
+                            <p>${task.description}</p>
+                            ${
+                                task.links 
+                                ? `<div>
+                                    <p>作品链接:</p>
+                                    <ul>
+                                        ${task.links.map(link => `<li><a href="${link}" target="_blank">${link}</a></li>`).join('')}
+                                    </ul>
+                                    ${task.qrCode ? `<img src="${task.qrCode}" class="qr-code" alt="快手二维码">` : ''}
+                                </div>`
+                                : ''
+                            }
+                            ${
+                                task.account
+                                ? `<p>快手账号: ${task.account}</p>`
+                                : ''
+                            }
+                            <p>任务ID: ${task.id} | 创建时间: ${new Date(task.createdAt).toLocaleDateString()}</p>
+                            <button class="btn" onclick="completeTask(${task.id})" 
+                                ${isCompleted && completionCount >= maxCompletions ? 'disabled' : ''}>
+                                ${isCompleted ? `已完成 ${completionCount}/${maxCompletions}` : '完成任务'}
+                            </button>
+                            ${completionCount > 0 ? `<p>已完成 ${completionCount} 次</p>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('taskList').innerHTML = taskHtml;
+        }
+
+        // 显示提现UI
+        function showWithdrawalUI() {
+            const now = new Date();
+            const isWithdrawalDay = now.getDate() === 1 || now.getDate() === 16;
+            const minWithdrawal = 10; // 最低提现金额
+            const canWithdraw = currentUser.balance >= minWithdrawal;
+            
+            let withdrawalHtml = `
+                <h3>提现申请</h3>
+                <p>提现日: 每月1号和16号</p>
+                <p>最低提现金额: ${minWithdrawal}元</p>
+            `;
+            
+            if(currentUser.paymentInfo) {
+                withdrawalHtml += `
+                    <div>
+                        <p>当前可提现金额: ${currentUser.balance.toFixed(2)}元</p>
+                        ${
+                            canWithdraw
+                            ? `<input type="number" id="withdrawAmount" min="${minWithdrawal}" max="${currentUser.balance}" 
+                                   step="0.01" placeholder="提现金额" value="${Math.min(currentUser.balance, 100).toFixed(2)}">
+                               <button class="btn" onclick="requestWithdrawal()" ${!isWithdrawalDay ? 'disabled' : ''}>
+                                   ${isWithdrawalDay ? '申请提现' : '非提现日'}
+                               </button>`
+                            : `<p>余额不足 ${minWithdrawal} 元，无法提现</p>`
+                        }
+                    </div>
+                `;
+            } else {
+                withdrawalHtml += '<p>请先绑定提现账户</p>';
+            }
+            
+            // 提现记录
+            const userWithdrawals = withdrawals.filter(w => w.userId === currentUser.id);
+            
+            withdrawalHtml += `
+                <h4>提现记录</h4>
+                ${
+                    userWithdrawals.length > 0
+                    ? `<table>
+                        <tr>
+                            <th>金额</th>
+                            <th>状态</th>
+                            <th>申请日期</th>
+                            <th>处理日期</th>
+                        </tr>
+                        ${
+                            userWithdrawals
+                                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                .map(w => `
+                                    <tr>
+                                        <td>${w.amount.toFixed(2)}元</td>
+                                        <td class="status-${w.status === '已批准' ? 'approved' : 
+                                                          w.status === '已拒绝' ? 'rejected' : 'pending'}">
+                                            ${w.status}
+                                        </td>
+                                        <td>${new Date(w.date).toLocaleString()}</td>
+                                        <td>${w.processedDate ? new Date(w.processedDate).toLocaleString() : '-'}</td>
+                                    </tr>
+                                `).join('')
+                        }
+                    </table>`
+                    : '<p>暂无提现记录</p>'
+                }
+            `;
+            
+            document.getElementById('withdrawalSection').innerHTML = withdrawalHtml;
+        }
+
+        // 显示用户列表
+        function showUserList() {
+            document.getElementById('adminContent').innerHTML = `
+                <h3>用户管理</h3>
+                <div style="margin-bottom:15px;">
+                    <input type="text" id="userSearch" placeholder="搜索用户名" oninput="filterUsers()">
+                    <button class="btn" onclick="filterUsers()">搜索</button>
+                    <button class="btn" onclick="resetUserFilter()">重置</button>
+                </div>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>余额</th>
+                        <th>完成任务</th>
+                        <th>注册日期</th>
+                        <th>最后登录</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    <tbody id="userTableBody">
+                        ${
+                            users.map(user => `
+                                <tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.username} ${user.isAdmin ? '(管理员)' : ''}</td>
+                                    <td>${user.balance.toFixed(2)}元</td>
+                                    <td>${user.completedTasks.length}</td>
+                                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                                    <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : '从未登录'}</td>
+                                    <td>${user.isAdmin ? '管理员' : '普通用户'}</td>
+                                    <td>
+                                        <button class="btn" onclick="editUser(${user.id})">编辑</button>
+                                        ${user.id !== currentUser.id ? `
+                                            <button class="btn ${user.isAdmin ? 'btn-danger' : 'btn-primary'}" 
+                                                onclick="toggleAdmin(${user.id})">
+                                                ${user.isAdmin ? '取消管理员' : '设为管理员'}
+                                            </button>
+                                            <button class="btn btn-danger" onclick="deleteUser(${user.id})">删除</button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')
+                        }
+                    </tbody>
+                </table>
+                <button class="btn" onclick="addUser()">添加用户</button>
+                <button class="btn" onclick="exportUsers()">导出用户</button>
+                <button class="btn" onclick="importUsers()">导入用户</button>
+            `;
+        }
+
+        // 过滤用户
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.getElementById('userTableBody').rows;
+            
+            for(let i = 0; i < rows.length; i++) {
+                const username = rows[i].cells[1].textContent.toLowerCase();
+                if(username.includes(searchTerm)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        // 重置用户过滤
+        function resetUserFilter() {
+            document.getElementById('userSearch').value = '';
+            const rows = document.getElementById('userTableBody').rows;
+            
+            for(let i = 0; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+        }
+
+        // 显示任务列表
+        function showTaskList() {
+            document.getElementById('adminContent').innerHTML = `
+                <h3>任务管理</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>类型</th>
+                        <th>奖励</th>
+                        <th>描述</th>
+                        <th>最大完成次数</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    ${
+                        tasks.map(task => `
+                            <tr>
+                                <td>${task.id}</td>
+                                <td>${task.type}</td>
+                                <td>${task.reward.toFixed(2)}元</td>
+                                <td>${task.description}</td>
+                                <td>${task.maxCompletions || '无限制'}</td>
+                                <td>${task.active ? '活跃' : '禁用'}</td>
+                                <td>${new Date(task.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                    <button class="btn" onclick="editTask(${task.id})">编辑</button>
+                                    <button class="btn ${task.active ? 'btn-danger' : 'btn-primary'}" 
+                                        onclick="toggleTask(${task.id})">
+                                        ${task.active ? '禁用' : '激活'}
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')
+                    }
+                </table>
+                <button class="btn" onclick="addTask()">添加任务</button>
+                <button class="btn" onclick="exportTasks()">导出任务</button>
+                <button class="btn" onclick="importTasks()">导入任务</button>
+            `;
+        }
+
+        // 显示提现审核
+        function showWithdrawals() {
+            document.getElementById('adminContent').innerHTML = `
+                <h3>提现审核</h3>
+                <div style="margin-bottom:15px;">
+                    <select id="withdrawalFilter" onchange="filterWithdrawals()">
+                        <option value="all">全部</option>
+                        <option value="pending">待审核</option>
+                        <option value="approved">已批准</option>
+                        <option value="rejected">已拒绝</option>
+                    </select>
+                    <button class="btn" onclick="filterWithdrawals()">筛选</button>
+                </div>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户</th>
+                        <th>金额</th>
+                        <th>支付方式</th>
+                        <th>账户信息</th>
+                        <th>申请日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    <tbody id="withdrawalTableBody">
+                        ${
+                            withdrawals.map(w => {
+                                const user = users.find(u => u.id === w.userId);
+                                return `
+                                    <tr>
+                                        <td>${w.id}</td>
+                                        <td>${user ? user.username : '未知用户'} (ID: ${w.userId})</td>
+                                        <td>${w.amount.toFixed(2)}元</td>
+                                        <td>${user && user.paymentInfo ? user.paymentInfo.type : '未绑定'}</td>
+                                        <td>${user && user.paymentInfo ? 
+                                            `${user.paymentInfo.account} (${user.paymentInfo.name || '无姓名'})` : '未绑定'}
+                                        </td>
+                                        <td>${new Date(w.date).toLocaleString()}</td>
+                                        <td class="status-${w.status === '已批准' ? 'approved' : 
+                                                              w.status === '已拒绝' ? 'rejected' : 'pending'}">
+                                            ${w.status}
+                                        </td>
+                                        <td>
+                                            ${w.status === '待审核' ? `
+                                                <button class="btn" onclick="approveWithdrawal(${w.id})">通过</button>
+                                                <button class="btn btn-danger" onclick="rejectWithdrawal(${w.id})">拒绝</button>
+                                            ` : ''}
+                                            <button class="btn" onclick="viewWithdrawalDetails(${w.id})">详情</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')
+                        }
+                    </tbody>
+                </table>
+                <div>
+                    <p>待审核总额: ${calculatePendingWithdrawals().toFixed(2)}元</p>
+                    <p>已批准总额: ${calculateApprovedWithdrawals().toFixed(2)}元</p>
+                </div>
+            `;
+        }
+
+        // 计算待审核总额
+        function calculatePendingWithdrawals() {
+            return withdrawals
+                .filter(w => w.status === '待审核')
+                .reduce((sum, w) => sum + w.amount, 0);
+        }
+
+        // 计算已批准总额
+        function calculateApprovedWithdrawals() {
+            return withdrawals
+                .filter(w => w.status === '已批准')
+                .reduce((sum, w) => sum + w.amount, 0);
+        }
+
+        // 过滤提现记录
+        function filterWithdrawals() {
+            const filterValue = document.getElementById('withdrawalFilter').value;
+            const rows = document.getElementById('withdrawalTableBody').rows;
+            
+            for(let i = 0; i < rows.length; i++) {
+                const statusCell = rows[i].cells[6];
+                const status = statusCell.textContent.trim();
+                
+                if(filterValue === 'all' || 
+                   (filterValue === 'pending' && status === '待审核') ||
+                   (filterValue === 'approved' && status === '已批准') ||
+                   (filterValue === 'rejected' && status === '已拒绝')) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        // 显示系统设置
+        function showSettings() {
+            document.getElementById('adminContent').innerHTML = `
+                <h3>系统设置</h3>
+                <div class="card">
+                    <h4>同步设置</h4>
+                    <button class="btn" onclick="syncData()">手动同步数据</button>
+                    <button class="btn" onclick="requestSyncFromOtherDevices()">从其他设备请求同步</button>
+                    <p>最后同步时间: ${lastSyncTime ? new Date(lastSyncTime).toLocaleString() : '从未同步'}</p>
+                </div>
+                
+                <div class="card">
+                    <h4>数据管理</h4>
+                    <button class="btn btn-danger" onclick="confirmResetData()">重置所有数据</button>
+                    <p>警告: 这将删除所有用户、任务和提现记录</p>
+                </div>
+                
+                <div class="card">
+                    <h4>提现设置</h4>
+                    <label>
+                        <input type="checkbox" id="enableAutoWithdrawal" checked>
+                        启用自动提现审核
+                    </label>
+                    <br>
+                    <label>
+                        最低提现金额: 
+                        <input type="number" id="minWithdrawalAmount" value="10" min="1" step="1">
+                    </label>
+                    <button class="btn" onclick="saveWithdrawalSettings()">保存设置</button>
+                </div>
+            `;
+        }
+
+        // 手动同步数据
+        function syncData() {
+            saveData();
+            showNotification('数据已同步');
+            lastSyncTime = new Date().toISOString();
+            localStorage.setItem('ks_promo_last_sync', lastSyncTime);
+            updateSyncStatus();
+        }
+
+        // 从其他设备请求同步
+        function requestSyncFromOtherDevices() {
+            if(syncChannel) {
+                syncChannel.postMessage({type: 'sync_request'});
+                showNotification('已发送同步请求');
+            } else {
+                alert('您的浏览器不支持跨设备同步功能');
+            }
+        }
+
+        // 确认重置数据
+        function confirmResetData() {
+            if(confirm("确定要重置所有数据吗？此操作不可撤销！")) {
+                resetAllData();
+            }
+        }
+
+        // 重置所有数据
+        function resetAllData() {
+            localStorage.clear();
+            users = [];
+            tasks = [];
+            withdrawals = [];
+            deviceCodes = [];
+            currentUser = null;
+            
+            // 重新初始化
+            init();
+            logout();
+            alert("所有数据已重置");
+        }
+
+        // 保存提现设置
+        function saveWithdrawalSettings() {
+            // 这里可以添加保存设置的逻辑
+            showNotification('设置已保存');
+        }
+
+        // 完成任务
+        function completeTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if(!task) return;
+            
+            // 检查最大完成次数
+            const completionCount = currentUser.completedTasks.filter(t => t.taskId === task.id).length;
+            if(task.maxCompletions && completionCount >= task.maxCompletions) {
+                alert("您已达到此任务的最大完成次数");
+                return;
+            }
+            
+            currentUser.completedTasks.push({
+                taskId,
+                date: new Date().toISOString()
+            });
+            
+            currentUser.balance += task.reward;
+            saveData();
+            
+            showNotification(`任务完成! 获得${task.reward.toFixed(2)}元奖励`);
+            showUserPanel();
+        }
+
+        // 绑定支付账户
+        function bindPayment() {
+            const type = document.getElementById('paymentType').value;
+            const account = document.getElementById('paymentAccount').value.trim();
+            const name = document.getElementById('paymentName') ? document.getElementById('paymentName').value.trim() : null;
+            
+            if(!account) {
+                alert("请输入账户号码");
+                return;
+            }
+            
+            currentUser.paymentInfo = { type, account, name };
+            saveData();
+            showNotification("绑定成功");
+            showUserPanel();
+        }
+
+        // 解绑支付账户
+        function unbindPayment() {
+            if(!confirm("确定要解绑支付账户吗？")) return;
+            
+            currentUser.paymentInfo = null;
+            saveData();
+            showNotification("解绑成功");
+            showUserPanel();
+        }
+
+        // 申请提现
+        function requestWithdrawal() {
+            const amountInput = document.getElementById('withdrawAmount');
+            if(!amountInput) return;
+            
+            const amount = parseFloat(amountInput.value);
+            
+            if(!amount || amount <= 0) {
+                alert("请输入有效的提现金额");
+                return;
+            }
+            
+            if(amount > currentUser.balance) {
+                alert("提现金额不能超过余额");
+                return;
+            }
+            
+            const minWithdrawal = 10; // 最低提现金额
+            if(amount < minWithdrawal) {
+                alert(`提现金额不能低于${minWithdrawal}元`);
+                return;
+            }
+            
+            currentUser.balance -= amount;
+            
+            const withdrawal = {
+                id: withdrawals.length > 0 ? Math.max(...withdrawals.map(w => w.id)) + 1 : 1,
+                userId: currentUser.id,
+                amount,
+                date: new Date().toISOString(),
+                status: "待审核",
+                paymentInfo: {...currentUser.paymentInfo}
+            };
+            
+            withdrawals.push(withdrawal);
+            saveData();
+            
+            showNotification("提现申请已提交，等待审核");
+            showUserPanel();
+        }
+
+        // 查看提现详情
+        function viewWithdrawalDetails(withdrawalId) {
+            const withdrawal = withdrawals.find(w => w.id === withdrawalId);
+            if(!withdrawal) return;
+            
+            const user = users.find(u => u.id === withdrawal.userId);
+            
+            let details = `
+                <h3>提现详情 #${withdrawal.id}</h3>
+                <p><strong>用户:</strong> ${user ? user.username : '未知用户'} (ID: ${withdrawal.userId})</p>
+                <p><strong>金额:</strong> ${withdrawal.amount.toFixed(2)}元</p>
+                <p><strong>状态:</strong> ${withdrawal.status}</p>
+                <p><strong>申请日期:</strong> ${new Date(withdrawal.date).toLocaleString()}</p>
+                ${
+                    withdrawal.processedDate 
+                    ? `<p><strong>处理日期:</strong> ${new Date(withdrawal.processedDate).toLocaleString()}</p>`
+                    : ''
+                }
+                <h4>支付信息</h4>
+                ${
+                    withdrawal.paymentInfo
+                    ? `<p><strong>类型:</strong> ${withdrawal.paymentInfo.type}</p>
+                       <p><strong>账户:</strong> ${withdrawal.paymentInfo.account}</p>
+                       ${withdrawal.paymentInfo.name ? `<p><strong>姓名:</strong> ${withdrawal.paymentInfo.name}</p>` : ''}`
+                    : '<p>无支付信息</p>'
+                }
+            `;
+            
+            alert(details);
+        }
+
+        // 批准提现
+        function approveWithdrawal(withdrawalId) {
+            const withdrawal = withdrawals.find(w => w.id === withdrawalId);
+            if(!withdrawal) return;
+            
+            withdrawal.status = "已批准";
+            withdrawal.processedDate = new Date().toISOString();
+            saveData();
+            
+            showNotification("提现申请已批准");
+            showWithdrawals();
+        }
+
+        // 拒绝提现
+        function rejectWithdrawal(withdrawalId) {
+            const withdrawal = withdrawals.find(w => w.id === withdrawalId);
+            if(!withdrawal) return;
+            
+            const user = users.find(u => u.id === withdrawal.userId);
+            if(user) {
+                user.balance += withdrawal.amount;
+            }
+            
+            withdrawal.status = "已拒绝";
+            withdrawal.processedDate = new Date().toISOString();
+            saveData();
+            
+            showNotification("提现申请已拒绝");
+            showWithdrawals();
+        }
+
+        // 添加用户
+        function addUser() {
+            const username = prompt("输入用户名:");
+            if(!username) return;
+            
+            const password = prompt("输入密码:");
+            if(!password) return;
+            
+            const isAdmin = confirm("是否设置为管理员?");
+            
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                username,
+                password,
+                isAdmin,
+                balance: 0,
+                completedTasks: [],
+                paymentInfo: null,
+                createdAt: new Date().toISOString(),
+                lastLogin: null
+            };
+            
+            users.push(newUser);
+            saveData();
+            showNotification("用户添加成功");
+            showUserList();
+        }
+
+        // 编辑用户
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if(!user) return;
+            
+            const newUsername = prompt("输入新用户名:", user.username);
+            if(!newUsername) return;
+            
+            const newPassword = prompt("输入新密码 (留空保持不变):");
+            
+            user.username = newUsername;
+            if(newPassword) {
+                user.password = newPassword;
+            }
+            
+            if(currentUser.isAdmin && currentUser.id !== user.id) {
+                user.isAdmin = confirm("是否设置为管理员?");
+            }
+            
+            saveData();
+            showNotification("用户信息已更新");
+            showUserList();
+        }
+
+        // 切换管理员状态
+        function toggleAdmin(userId) {
+            const user = users.find(u => u.id === userId);
+            if(!user) return;
+            
+            user.isAdmin = !user.isAdmin;
+            saveData();
+            showNotification(`用户 ${user.username} 已${user.isAdmin ? '设为管理员' : '取消管理员'}`);
+            showUserList();
+        }
+
+        // 删除用户
+        function deleteUser(userId) {
+            if(userId === currentUser.id) {
+                alert("不能删除当前登录的用户");
+                return;
+            }
+            
+            if(!confirm("确定删除此用户? 此操作将同时删除该用户的提现记录")) return;
+            
+            // 删除用户的提现记录
+            withdrawals = withdrawals.filter(w => w.userId !== userId);
+            
+            // 删除用户
+            users = users.filter(u => u.id !== userId);
+            
+            saveData();
+            showNotification("用户已删除");
+            showUserList();
+        }
+
+        // 导出用户数据
+        function exportUsers() {
+            const dataStr = JSON.stringify(users, null, 2);
+            downloadFile('星烁游戏用户数据.json', dataStr);
+        }
+
+        // 导入用户数据
+        function importUsers() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const importedUsers = JSON.parse(event.target.result);
+                        
+                        if(!Array.isArray(importedUsers)) {
+                            throw new Error("无效的用户数据格式");
+                        }
+                        
+                        // 保留当前用户
+                        const currentUserId = currentUser ? currentUser.id : null;
+                        
+                        // 合并用户数据
+                        importedUsers.forEach(importedUser => {
+                            const existingUser = users.find(u => u.id === importedUser.id);
+                            
+                            if(!existingUser) {
+                                users.push(importedUser);
+                            } else if(existingUser.id !== currentUserId) {
+                                // 不覆盖当前登录用户的数据
+                                Object.assign(existingUser, importedUser);
+                            }
+                        });
+                        
+                        saveData();
+                        showNotification("用户数据导入成功");
+                        showUserList();
+                    } catch (error) {
+                        alert(`导入失败: ${error.message}`);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // 导出任务数据
+        function exportTasks() {
+            const dataStr = JSON.stringify(tasks, null, 2);
+            downloadFile('星烁游戏任务数据.json', dataStr);
+        }
+
+        // 导入任务数据
+        function importTasks() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const importedTasks = JSON.parse(event.target.result);
+                        
+                        if(!Array.isArray(importedTasks)) {
+                            throw new Error("无效的任务数据格式");
+                        }
+                        
+                        // 合并任务数据
+                        importedTasks.forEach(importedTask => {
+                            const existingTask = tasks.find(t => t.id === importedTask.id);
+                            
+                            if(!existingTask) {
+                                tasks.push(importedTask);
+                            } else {
+                                Object.assign(existingTask, importedTask);
+                            }
+                        });
+                        
+                        saveData();
+                        showNotification("任务数据导入成功");
+                        showTaskList();
+                    } catch (error) {
+                        alert(`导入失败: ${error.message}`);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // 添加任务
+        function addTask() {
+            const type = prompt("任务类型 (如:下载作品/关注账号):");
+            if(!type) return;
+            
+            const reward = parseFloat(prompt("奖励金额:"));
+            if(isNaN(reward)) return;
+            
+            const description = prompt("任务描述:");
+            if(!description) return;
+            
+            const maxCompletions = prompt("最大完成次数 (留空为无限制):");
+            
+            let links = null;
+            let account = null;
+            let qrCode = null;
+            
+            if(type.includes("下载")) {
+                const linksInput = prompt("输入作品链接，多个链接用逗号分隔:");
+                if(linksInput) {
+                    links = linksInput.split(',').map(l => l.trim());
+                }
+                qrCode = prompt("输入二维码图片文件名 (可选):");
+            } else if(type.includes("关注")) {
+                account = prompt("输入快手账号:", "4713343918");
+            }
+            
+            const newTask = {
+                id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+                type,
+                reward,
+                description,
+                links,
+                account,
+                qrCode,
+                active: true,
+                createdAt: new Date().toISOString()
+            };
+            
+            if(maxCompletions && !isNaN(parseInt(maxCompletions))) {
+                newTask.maxCompletions = parseInt(maxCompletions);
+            }
+            
+            tasks.push(newTask);
+            saveData();
+            showNotification("任务添加成功");
+            showTaskList();
+        }
+
+        // 编辑任务
+        function editTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if(!task) return;
+            
+            const newType = prompt("输入新任务类型:", task.type);
+            if(!newType) return;
+            
+            const newReward = parseFloat(prompt("输入新奖励金额:", task.reward));
+            if(isNaN(newReward)) return;
+            
+            const newDesc = prompt("输入新描述:", task.description);
+            if(!newDesc) return;
+            
+            const newMaxCompletions = prompt("输入新最大完成次数 (留空为无限制):", 
+                                          task.maxCompletions ? task.maxCompletions.toString() : '');
+            
+            task.type = newType;
+            task.reward = newReward;
+            task.description = newDesc;
+            
+            if(newMaxCompletions && !isNaN(parseInt(newMaxCompletions))) {
+                task.maxCompletions = parseInt(newMaxCompletions);
+            } else {
+                delete task.maxCompletions;
+            }
+            
+            if(task.type.includes("下载")) {
+                const newLinks = prompt("输入新作品链接，多个链接用逗号分隔:", 
+                                      task.links ? task.links.join(', ') : '');
+                if(newLinks) {
+                    task.links = newLinks.split(',').map(l => l.trim());
+                } else {
+                    task.links = null;
+                }
+                task.qrCode = prompt("输入新二维码图片文件名 (可选):", task.qrCode || '');
+                task.account = null;
+            } else if(task.type.includes("关注")) {
+                task.account = prompt("输入新快手账号:", task.account || "4713343918");
+                task.links = null;
+                task.qrCode = null;
+            }
+            
+            saveData();
+            showNotification("任务已更新");
+            showTaskList();
+        }
+
+        // 切换任务状态
+        function toggleTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if(!task) return;
+            
+            task.active = !task.active;
+            saveData();
+            showNotification(`任务已${task.active ? '激活' : '禁用'}`);
+            showTaskList();
+        }
+
+        // 导出数据
+        function exportData() {
+            const data = {
+                users,
+                tasks,
+                withdrawals,
+                deviceCodes,
+                version: '1.0',
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            downloadFile('星烁游戏系统备份.json', dataStr);
+        }
+
+        // 导入数据
+        function importData() {
+            if(!confirm("导入数据将覆盖当前所有数据，确定继续吗？")) return;
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        if(!importedData.users || !importedData.tasks || !importedData.withdrawals) {
+                            throw new Error("无效的数据格式");
+                        }
+                        
+                        users = importedData.users;
+                        tasks = importedData.tasks;
+                        withdrawals = importedData.withdrawals;
+                        deviceCodes = importedData.deviceCodes || [];
+                        
+                        saveData();
+                        showNotification("数据导入成功");
+                        logout();
+                    } catch (error) {
+                        alert(`导入失败: ${error.message}`);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // 下载文件
+        function downloadFile(filename, text) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        // 退出登录
+        function logout() {
+            if(currentUser) {
+                currentUser.loginToken = null;
+                saveData();
+            }
+            
+            currentUser = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'none';
+            
+            // 清除登录表单
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('deviceCode').value = '';
+            document.getElementById('deviceCodeDisplay').style.display = 'none';
+            document.getElementById('generateCodeBtn').disabled = false;
+        }
+
+        // 初始化应用
+        window.onload = init;
+    </script>
 </body>
 </html>
