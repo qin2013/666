@@ -3,53 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>无服务器前后端应用</title>
+    <title>石头剪刀布 - 联机对战</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            text-align: center;
         }
-        .task-list {
+        #gameArea {
+            display: none;
+            margin-top: 20px;
+        }
+        #connectionArea {
             margin: 20px 0;
         }
-        .task {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #f5f5f5;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
+        .choice {
+            font-size: 50px;
+            margin: 0 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        .completed {
-            text-decoration: line-through;
-            opacity: 0.7;
+        .choice:hover {
+            transform: scale(1.2);
+        }
+        #result {
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 36px;
+        }
+        #playerId {
+            font-weight: bold;
+            word-break: break-all;
+        }
+        #opponentId {
+            font-weight: bold;
+            word-break: break-all;
+            color: #d9534f;
+        }
+        #waiting {
+            display: none;
+            font-style: italic;
+            color: #666;
+        }
+        #gameLog {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
         }
         button {
-            padding: 5px 10px;
-            margin-left: 5px;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #5bc0de;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
         input {
             padding: 8px;
-            width: 70%;
+            width: 200px;
         }
     </style>
 </head>
 <body>
-    <h1>简易任务管理器</h1>
+    <h1>石头剪刀布 - 联机对战</h1>
     
-    <div>
-        <input type="text" id="taskInput" placeholder="输入新任务">
-        <button onclick="addTask()">添加任务</button>
+    <div id="connectionArea">
+        <button id="createGame">创建游戏</button>
+        <span>或</span>
+        <input type="text" id="joinGameId" placeholder="输入对方游戏ID">
+        <button id="joinGame">加入游戏</button>
     </div>
     
-    <div class="task-list" id="taskList">
-        <!-- 任务将在这里动态生成 -->
+    <div id="waiting">等待对手连接...</div>
+    
+    <div id="gameArea">
+        <p>你的ID: <span id="playerId"></span></p>
+        <p>对手ID: <span id="opponentId"></span></p>
+        
+        <div id="choices">
+            <div class="choice" data-choice="✊">✊</div>
+            <div class="choice" data-choice="✌️">✌️</div>
+            <div class="choice" data-choice="✋">✋</div>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div id="gameLog"></div>
     </div>
     
-    <script src="backend.js"></script>
-    <script src="app.js"></script>
+    <!-- 加载PeerJS库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
