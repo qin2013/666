@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星烁游戏推广系统 - 快手账号推广赚钱平台</title>
+    <title>星烁游戏推广系统 - 智能审核平台</title>
     <style>
         :root {
             --primary-color: #ff6b00;
@@ -13,21 +13,61 @@
             --text-color: #333333;
             --light-text: #999999;
             --border-color: #ffe0cc;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
         }
         
         body {
             font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--light-bg);
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+        
+        /* 优化背景动画性能 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #fff8f0 0%, #ffe6d6 100%);
+            overflow: hidden;
+            will-change: transform;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.1);
+            animation: float 15s infinite linear;
+            will-change: transform;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
         }
         
         .container {
             max-width: 100%;
             padding: 15px;
             padding-bottom: 70px;
+            position: relative;
+            z-index: 1;
         }
         
         header {
@@ -38,12 +78,16 @@
             border-radius: 0 0 15px 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             position: relative;
+            backdrop-filter: blur(5px);
+            background: rgba(255, 107, 0, 0.9);
+            border-bottom: 3px solid rgba(255,255,255,0.2);
         }
         
         h1 {
             margin: 0;
             font-size: 22px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
         }
         
         .user-header {
@@ -66,6 +110,13 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.4);
         }
         
         .tab-bar {
@@ -77,6 +128,9 @@
             right: 0;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             z-index: 100;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+            border-top: 1px solid rgba(0,0,0,0.05);
         }
         
         .tab-item {
@@ -85,17 +139,40 @@
             padding: 12px 0;
             color: var(--light-text);
             font-size: 14px;
+            transition: all 0.3s;
+            position: relative;
         }
         
         .tab-item.active {
             color: var(--primary-color);
             font-weight: bold;
+            transform: translateY(-5px);
         }
         
         .tab-item i {
             display: block;
             font-size: 20px;
             margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+        
+        .tab-item.active i {
+            transform: scale(1.2);
+        }
+        
+        .tab-item .badge {
+            position: absolute;
+            top: 5px;
+            right: 20%;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .banner {
@@ -108,6 +185,14 @@
             font-weight: bold;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(255, 59, 0, 0.3);
+            animation: pulse 2s infinite;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
         
         .card {
@@ -117,11 +202,37 @@
             margin: 15px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
         
         .money-card {
             background: linear-gradient(135deg, #fff4e6, #ffebcc);
             border-left: 4px solid var(--primary-color);
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255,107,0,0.3); }
+            to { box-shadow: 0 0 15px rgba(255,107,0,0.5); }
         }
         
         .highlight {
@@ -135,6 +246,7 @@
             font-weight: bold;
             text-align: center;
             margin: 10px 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
         
         .btn {
@@ -152,6 +264,50 @@
             width: 100%;
             font-size: 16px;
             cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(255, 107, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn:after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(30deg);
+            transition: all 0.3s;
+        }
+        
+        .btn:hover:after {
+            left: 100%;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
         }
         
         .steps {
@@ -174,6 +330,7 @@
             line-height: 24px;
             margin-right: 10px;
             flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(255,107,0,0.3);
         }
         
         .user-list {
@@ -186,6 +343,11 @@
             margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px dashed #ffd9cc;
+            transition: all 0.3s;
+        }
+        
+        .user-item:hover {
+            transform: translateX(5px);
         }
         
         .user-avatar-small {
@@ -199,6 +361,7 @@
             margin-right: 10px;
             color: var(--primary-color);
             font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .user-info {
@@ -217,6 +380,10 @@
             color: var(--light-text);
             font-size: 12px;
             margin-top: 20px;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         
         .price-list {
@@ -228,6 +395,11 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid #ffe6d6;
+            transition: all 0.3s;
+        }
+        
+        .price-item:hover {
+            background: rgba(255,235,204,0.3);
         }
         
         .qr-code {
@@ -241,6 +413,11 @@
             border: 1px solid #eee;
             padding: 5px;
             background: white;
+            transition: all 0.3s;
+        }
+        
+        .qr-code img:hover {
+            transform: scale(1.05);
         }
         
         /* 图片预览 */
@@ -250,6 +427,13 @@
             margin-top: 10px;
             border-radius: 5px;
             display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .proof-preview:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         /* 音乐控制 */
@@ -268,6 +452,12 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,1);
         }
         
         /* 规则介绍样式 */
@@ -279,6 +469,11 @@
             margin-bottom: 10px;
             padding-left: 15px;
             position: relative;
+            transition: all 0.3s;
+        }
+        
+        .rule-item:hover {
+            transform: translateX(5px);
         }
         
         .rule-item:before {
@@ -320,6 +515,14 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         
         .stat-value {
@@ -327,6 +530,7 @@
             font-weight: bold;
             color: var(--primary-color);
             margin: 5px 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
         
         .stat-label {
@@ -340,6 +544,11 @@
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
+            transition: all 0.3s;
+        }
+        
+        .withdraw-item:hover {
+            background: rgba(255,235,204,0.3);
         }
         
         .withdraw-status {
@@ -370,6 +579,14 @@
             padding: 10px;
             margin: 15px 0;
             border-radius: 0 5px 5px 0;
+            animation: slideIn 0.5s;
+            backdrop-filter: blur(5px);
+            background: rgba(248,249,250,0.9);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
         /* 用户须知弹窗 */
@@ -395,6 +612,7 @@
             overflow-y: auto;
             padding: 20px;
             animation: fadeIn 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
         
         @keyframes fadeIn {
@@ -434,6 +652,11 @@
             width: 100%;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .notice-confirm-btn:hover {
+            background: var(--secondary-color);
         }
         
         /* 图片上传区域 */
@@ -445,17 +668,26 @@
             cursor: pointer;
             margin-bottom: 10px;
             transition: all 0.3s;
+            background: rgba(255,255,255,0.7);
+            position: relative;
         }
         
         .upload-area:hover {
             border-color: var(--primary-color);
             background: #fff8f0;
+            transform: translateY(-3px);
         }
         
         .upload-area i {
+            display: block;
             font-size: 40px;
             color: var(--primary-color);
             margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover i {
+            transform: scale(1.1);
         }
         
         .upload-text {
@@ -470,6 +702,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .task-item:hover {
+            background: rgba(255,235,204,0.3);
         }
         
         /* 审核状态标签 */
@@ -494,20 +731,286 @@
             background: #f8d7da;
             color: #721c24;
         }
+        
+        /* 表单控件 */
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffe6d6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.8);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(255,107,0,0.3);
+        }
+        
+        /* 用户菜单 */
+        .user-menu {
+            display: none;
+            position: absolute;
+            right: 15px;
+            top: 70px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 150px;
+            animation: fadeIn 0.3s;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        .user-menu div {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .user-menu div:hover {
+            background: #fff8f0;
+            color: var(--primary-color);
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        /* 加载动画 */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1003;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loader-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 15px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 审核详情 */
+        .audit-details {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .audit-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .audit-pass {
+            color: var(--success-color);
+        }
+        
+        .audit-fail {
+            color: var(--danger-color);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .stat-card {
+                min-width: 100%;
+            }
+            
+            .banner {
+                font-size: 14px;
+            }
+            
+            .big-money {
+                font-size: 20px;
+            }
+        }
+        
+        /* 高级动画效果 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        /* 高级进度条 */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0.3) 50%, 
+                rgba(255,255,255,0.1) 100%);
+            animation: progressShine 2s infinite;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 高级提示框 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 高级标签 */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .tag-primary {
+            background: rgba(255,107,0,0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(255,107,0,0.3);
+        }
+        
+        .tag-success {
+            background: rgba(40,167,69,0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(40,167,69,0.3);
+        }
+        
+        .tag-danger {
+            background: rgba(220,53,69,0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(220,53,69,0.3);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+    <!-- 背景动画 -->
+    <div class="bg-animation" id="bg-animation"></div>
+    
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <div id="loader-text">正在提交任务，请稍候...</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+    
     <!-- 用户须知弹窗 -->
     <div class="notice-modal" id="notice-modal">
         <div class="notice-content">
             <div class="notice-title"><i class="fas fa-exclamation-circle"></i> 用户须知</div>
             <div class="notice-item">请确保您上传的截图清晰可见，包含完整的快手关注或游戏下载界面</div>
-            <div class="notice-item">同一设备和快手天两内只能完成一次下载任务，请勿重复提交否则账号封禁处理</div>
-            <div class="notice-item">每月1号和16提现，提现需联系QQ: 3965723380</div>
+            <div class="notice-item">同一设备和快手账号两天内只能完成一次下载任务，请勿重复提交否则账号封禁处理</div>
+            <div class="notice-item">每月1号和16号提现，提现需联系QQ: 3965723380</div>
             <div class="notice-item">禁止使用任何作弊手段，违规者将封号处理</div>
             <div class="notice-item">推广时请遵守平台规则，不得发布违规内容</div>
             <div class="notice-item">每日推广人数无上限，多劳多得</div>
+            <div class="notice-item">每次只能提交一个人的申请，请确保截图真实有效</div>
             <div class="notice-item">如有疑问，请及时联系客服QQ: 3965723380</div>
             <button class="notice-confirm-btn" onclick="hideNotice()">我已阅读并同意</button>
         </div>
@@ -539,14 +1042,14 @@
         </div>
     </header>
     
-    <div class="user-menu" id="user-menu" style="display: none; position: absolute; right: 15px; top: 70px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1000; width: 150px;">
-        <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="showLoginForm()"><i class="fas fa-sign-in-alt"></i> 用户登录</div>
-        <div style="padding: 10px; cursor: pointer;" id="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出登录</div>
+    <div class="user-menu" id="user-menu" style="display: none;">
+        <div onclick="showLoginForm()"><i class="fas fa-sign-in-alt"></i> 用户登录</div>
+        <div id="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出登录</div>
     </div>
     
     <!-- 登录表单 -->
-    <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px;">
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
             <h2 style="margin-top: 0;">用户登录</h2>
             <div class="form-group">
                 <label>手机号码</label>
@@ -565,8 +1068,8 @@
     </div>
     
     <!-- 提现模态框 -->
-    <div id="withdraw-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px;">
+    <div class="modal" id="withdraw-modal">
+        <div class="modal-content">
             <h2 style="margin-top: 0;">申请提现</h2>
             <div class="form-group">
                 <label>提现金额</label>
@@ -636,7 +1139,7 @@
                     </div>
                     <div class="step">
                         <div class="step-num">3</div>
-                        <div>好友完成关注/下载后，系统自动结算</div>
+                        <div>好友完成关注/下载后，提交截图审核</div>
                     </div>
                 </div>
                 
@@ -669,8 +1172,9 @@
             <div class="card">
                 <h2><i class="fas fa-info-circle"></i> 活动规则</h2>
                 <div class="rules-container">
-                    <div class="rule-item">收益在每月的1号和16好提现，需联系QQ群主: 3965723380 处理</div>
-                    <div class="rule-item">同一快手账号设两天只能做一次下载一个任务否则没有收益</div>
+                    <div class="rule-item">收益在每月的1号和16号提现，需联系QQ群主: 3965723380 处理</div>
+                    <div class="rule-item">每次只能提交一个人的申请，确保截图真实有效</div>
+                    <div class="rule-item">同一快手账号两天内只能做一次下载任务</div>
                     <div class="rule-item">可以找朋友帮忙做任务，但必须使用不同的快手账号</div>
                     <div class="rule-item">提交关注任务需提供快手关注截图</div>
                     <div class="rule-item">提交游戏任务需提供5分钟以上的游玩记录截图</div>
@@ -735,7 +1239,7 @@
                     </div>
                     <div class="form-group">
                         <label>推广人数</label>
-                        <input type="number" class="form-control" id="task-count" placeholder="请输入推广人数">
+                        <input type="number" class="form-control" id="task-count" value="1" min="1" max="1" readonly>
                     </div>
                     <div class="form-group">
                         <label>推广截图证明 <span class="task-proof-required">*必填</span></label>
@@ -753,7 +1257,7 @@
                         <label>备注说明</label>
                         <textarea class="form-control" id="task-remark" rows="3" placeholder="可填写推广详情"></textarea>
                     </div>
-                    <button class="btn" onclick="submitTask()"><i class="fas fa-paper-plane"></i> 提交审核</button>
+                    <button class="btn" id="submit-task-btn" onclick="submitTask()"><i class="fas fa-paper-plane"></i> 提交审核</button>
                 </div>
             </div>
             
@@ -782,6 +1286,7 @@
         <div class="tab-item" onclick="switchTab('task')">
             <i class="fas fa-tasks"></i>
             <span>任务提交</span>
+            <div class="badge" id="pending-tasks-badge" style="display: none;">0</div>
         </div>
     </div>
     
@@ -791,34 +1296,65 @@
     </footer>
 
     <script>
-        // 使用localStorage模拟数据库
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
+        // 初始化数据存储
+        function initializeStorage() {
+            // 检查是否已有数据，如果没有才初始化
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('tasks')) {
+                localStorage.setItem('tasks', JSON.stringify([
+                    { id: 1, type: 'follow', name: '快手账号关注', reward: 0.1, desc: '关注星烁游戏快手官方账号' },
+                    { id: 2, type: 'download', name: '下载安装游戏', reward: 5, desc: '下载并安装星烁游戏的指定游戏' }
+                ]));
+            }
+            if (!localStorage.getItem('userTasks')) {
+                localStorage.setItem('userTasks', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('earnings')) {
+                localStorage.setItem('earnings', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('withdrawals')) {
+                localStorage.setItem('withdrawals', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('imageHashes')) {
+                localStorage.setItem('imageHashes', JSON.stringify([]));
+            }
         }
         
-        if (!localStorage.getItem('tasks')) {
-            localStorage.setItem('tasks', JSON.stringify([
-                { id: 1, type: 'follow', name: '快手账号关注', reward: 0.1, desc: '关注星烁游戏快手官方账号' },
-                { id: 2, type: 'download', name: '下载安装游戏', reward: 5, desc: '下载并安装星烁游戏的指定游戏' }
-            ]));
+        // 创建背景动画粒子
+        function createParticles() {
+            const bgAnimation = document.getElementById('bg-animation');
+            // 减少粒子数量以提高性能
+            const particleCount = Math.min(Math.floor(window.innerWidth / 20), 30);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机大小
+                const size = Math.random() * 15 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机位置
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // 随机透明度
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                // 随机动画延迟和持续时间
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                
+                bgAnimation.appendChild(particle);
+            }
         }
         
-        if (!localStorage.getItem('userTasks')) {
-            localStorage.setItem('userTasks', JSON.stringify([]));
-        }
-        
-        if (!localStorage.getItem('earnings')) {
-            localStorage.setItem('earnings', JSON.stringify([]));
-        }
-        
-        if (!localStorage.getItem('withdrawals')) {
-            localStorage.setItem('withdrawals', JSON.stringify([]));
-        }
-        
-        // 存储上传的图片哈希值
-        if (!localStorage.getItem('imageHashes')) {
-            localStorage.setItem('imageHashes', JSON.stringify([]));
-        }
+        // 初始化存储
+        initializeStorage();
+        createParticles();
         
         // 当前用户状态
         let currentUser = null;
@@ -896,7 +1432,7 @@
             const taskType = document.getElementById('task-type').value;
             const requirementText = taskType === 'follow' 
                 ? '请上传快手关注截图，需清晰显示关注状态' 
-                : '请上传5分钟以上的游戏游玩记录截图，需显示游戏ID和时间';
+                : '请上传游戏截图，需显示游戏界面和游玩时间';
             document.getElementById('proof-requirement').textContent = requirementText;
             
             // 重置上传区域显示
@@ -909,37 +1445,6 @@
             
             // 隐藏预览
             document.getElementById('proof-preview').style.display = 'none';
-        }
-        
-        // 计算图片的简单哈希值（模拟）
-        async function calculateImageHash(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // 在实际应用中，这里应该使用更复杂的哈希算法
-                    // 这里我们简单使用文件大小和部分数据作为哈希
-                    const content = e.target.result;
-                    const size = file.size;
-                    const hash = size + '_' + content.length + '_' + content.slice(0, 20);
-                    resolve(hash);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-        
-        // 检查图片是否重复
-        async function checkDuplicateImage(file) {
-            const hash = await calculateImageHash(file);
-            const imageHashes = JSON.parse(localStorage.getItem('imageHashes'));
-            
-            if (imageHashes.includes(hash)) {
-                return true; // 图片已存在
-            }
-            
-            // 保存新图片的哈希
-            imageHashes.push(hash);
-            localStorage.setItem('imageHashes', JSON.stringify(imageHashes));
-            return false;
         }
         
         // DOM加载完成后初始化
@@ -995,6 +1500,9 @@
             // 每5分钟刷新赚钱榜
             setInterval(updateEarningsLeaderboard, 5 * 60 * 1000);
             updateEarningsLeaderboard();
+            
+            // 更新待审核任务数量
+            updatePendingTasksCount();
         });
         
         // 更新赚钱榜
@@ -1118,6 +1626,11 @@
                 showLoginForm();
                 switchTab('home');
             }
+            
+            // 如果是任务页，更新任务历史
+            if (tabName === 'task') {
+                updateTaskHistory();
+            }
         }
         
         // 显示/隐藏用户菜单
@@ -1233,7 +1746,8 @@
                     registerTime: new Date().toISOString(),
                     earnings: 0,
                     withdrawable: 0,
-                    lastTaskTime: {}
+                    lastTaskTime: {},
+                    hasLoggedIn: false
                 };
                 users.push(user);
                 localStorage.setItem('users', JSON.stringify(users));
@@ -1250,6 +1764,9 @@
                 user.hasLoggedIn = true;
                 localStorage.setItem('users', JSON.stringify(users));
             }
+            
+            // 更新待审核任务数量
+            updatePendingTasksCount();
         }
         
         // 退出登录
@@ -1343,6 +1860,69 @@
             document.getElementById('earnings-details').innerHTML = detailsHtml;
         }
         
+        // 更新待审核任务数量
+        function updatePendingTasksCount() {
+            if (!currentUser) {
+                document.getElementById('pending-tasks-badge').style.display = 'none';
+                return;
+            }
+            
+            const userTasks = JSON.parse(localStorage.getItem('userTasks'));
+            const pendingCount = userTasks.filter(t => 
+                t.userId === currentUser.id && 
+                t.status === 'pending'
+            ).length;
+            
+            if (pendingCount > 0) {
+                document.getElementById('pending-tasks-badge').textContent = pendingCount;
+                document.getElementById('pending-tasks-badge').style.display = 'flex';
+            } else {
+                document.getElementById('pending-tasks-badge').style.display = 'none';
+            }
+        }
+        
+        // 检查截图是否符合要求 - 更严格的验证
+        function validateProofImage(imageSrc, taskType) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = imageSrc;
+                
+                img.onload = function() {
+                    // 更严格的验证逻辑
+                    let isValid = false;
+                    let message = '';
+                    
+                    // 模拟更严格的检查 - 随机决定是否通过，但通过率更低
+                    if (taskType === 'follow') {
+                        // 关注任务验证更严格
+                        isValid = Math.random() > 0.7; // 只有30%通过率
+                        message = isValid ? '截图验证通过' : '截图不符合快手关注要求，请确保包含完整的快手界面和关注状态';
+                    } else if (taskType === 'download') {
+                        // 下载任务验证更严格
+                        isValid = Math.random() > 0.6; // 只有40%通过率
+                        message = isValid ? '截图验证通过' : '截图不符合游戏下载要求，请确保包含游戏界面和至少5分钟游玩时间';
+                    }
+                    
+                    // 模拟30秒的审核时间
+                    setTimeout(() => {
+                        resolve({ 
+                            valid: isValid, 
+                            message: message,
+                            reviewTime: new Date().toISOString()
+                        });
+                    }, 30000); // 30秒 = 30000毫秒
+                };
+                
+                img.onerror = function() {
+                    resolve({ 
+                        valid: false, 
+                        message: '图片加载失败，请重新上传',
+                        reviewTime: new Date().toISOString()
+                    });
+                };
+            });
+        }
+        
         // 提交任务
         async function submitTask() {
             playClickSound();
@@ -1352,127 +1932,149 @@
             }
             
             const type = document.getElementById('task-type').value;
-            const count = parseInt(document.getElementById('task-count').value);
-            const proof = document.getElementById('task-proof').files[0];
+            const proofFile = document.getElementById('task-proof').files[0];
             const remark = document.getElementById('task-remark').value;
             
-            if (!count || count <= 0) {
-                alert('请输入有效的推广人数');
-                return;
-            }
-            
-            if (!proof) {
+            if (!proofFile) {
                 alert('请上传推广截图证明');
                 return;
             }
             
-            // 检查图片是否重复
-            const isDuplicate = await checkDuplicateImage(proof);
-            if (isDuplicate) {
-                alert('任务审核未通过：检测到重复使用相同的截图');
-                return;
-            }
-            
-            // 获取任务奖励标准
-            const tasks = JSON.parse(localStorage.getItem('tasks'));
-            const task = tasks.find(t => t.type === type);
-            
-            if (!task) {
-                alert('任务类型错误');
-                return;
-            }
-            
-            // 创建用户任务记录
+            // 检查用户是否有待审核的任务
             const userTasks = JSON.parse(localStorage.getItem('userTasks'));
-            const newTask = {
-                id: Date.now(),
-                userId: currentUser.id,
-                taskId: task.id,
-                type: task.type,
-                count: count,
-                status: 'pending',
-                proof: '已上传', // 实际应用中应该上传到服务器
-                remark: remark,
-                submitTime: new Date().toISOString(),
-                reward: task.reward * count
-            };
+            const hasPendingTask = userTasks.some(t => 
+                t.userId === currentUser.id && 
+                t.status === 'pending'
+            );
             
-            userTasks.push(newTask);
-            localStorage.setItem('userTasks', JSON.stringify(userTasks));
-            
-            // 更新用户最后任务时间
-            const users = JSON.parse(localStorage.getItem('users'));
-            const user = users.find(u => u.id === currentUser.id);
-            if (user) {
-                if (!user.lastTaskTime) user.lastTaskTime = {};
-                user.lastTaskTime[type] = new Date().toISOString();
-                localStorage.setItem('users', JSON.stringify(users));
-                currentUser.lastTaskTime = user.lastTaskTime;
+            if (hasPendingTask) {
+                alert('您已有任务正在审核中，请等待审核完成后再提交新任务');
+                return;
             }
             
-            // 清空表单
-            document.getElementById('task-count').value = '';
-            document.getElementById('task-proof').value = '';
-            document.getElementById('proof-preview').style.display = 'none';
-            document.getElementById('task-remark').value = '';
+            // 显示加载动画
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('loader-text').textContent = '正在提交任务...';
             
-            // 重置上传区域显示
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.innerHTML = `
-                <i class="fas fa-cloud-upload-alt"></i>
-                <div class="upload-text">点击上传截图</div>
-                <div style="font-size: 12px; color: var(--light-text);" id="proof-requirement">${type === 'follow' ? '请上传快手关注截图' : '请上传游戏游玩记录截图'}</div>
-            `;
-            
-            // 自动审核任务
-            setTimeout(() => {
-                // 模拟检查图片内容
-                const isValidImage = Math.random() < 0.8; // 80%概率通过
+            // 读取图片文件
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const imageSrc = e.target.result;
                 
-                if (isValidImage) {
-                    // 审核通过
-                    const earnings = JSON.parse(localStorage.getItem('earnings'));
-                    earnings.push({
-                        id: Date.now(),
-                        userId: currentUser.id,
-                        type: type,
-                        amount: task.reward * count,
-                        time: new Date().toISOString(),
-                        taskId: newTask.id
-                    });
-                    
-                    localStorage.setItem('earnings', JSON.stringify(earnings));
-                    
-                    // 更新用户可提现余额
-                    const users = JSON.parse(localStorage.getItem('users'));
-                    const user = users.find(u => u.id === currentUser.id);
-                    if (user) {
-                        user.withdrawable += task.reward * count;
-                        localStorage.setItem('users', JSON.stringify(users));
-                        currentUser.withdrawable = user.withdrawable;
-                        updateUserDisplay();
-                    }
-                    
-                    // 更新任务状态
-                    newTask.status = 'approved';
-                    newTask.reviewTime = new Date().toISOString();
-                    localStorage.setItem('userTasks', JSON.stringify(userTasks));
-                    
-                    alert('任务已自动审核通过！');
-                } else {
-                    // 审核不通过
-                    newTask.status = 'rejected';
-                    newTask.reviewTime = new Date().toISOString();
-                    localStorage.setItem('userTasks', JSON.stringify(userTasks));
-                    
-                    alert('任务审核未通过：截图与任务不符');
+                // 创建临时任务记录，状态为pending
+                const tasks = JSON.parse(localStorage.getItem('tasks'));
+                const task = tasks.find(t => t.type === type);
+                
+                if (!task) {
+                    document.getElementById('loader').style.display = 'none';
+                    alert('任务类型错误');
+                    return;
+                }
+                
+                const newTask = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    taskId: task.id,
+                    type: task.type,
+                    count: 1,
+                    status: 'pending',
+                    proof: '已上传',
+                    remark: remark,
+                    submitTime: new Date().toISOString(),
+                    reward: task.reward
+                };
+                
+                userTasks.push(newTask);
+                localStorage.setItem('userTasks', JSON.stringify(userTasks));
+                
+                // 更新用户最后任务时间
+                const users = JSON.parse(localStorage.getItem('users'));
+                const user = users.find(u => u.id === currentUser.id);
+                if (user) {
+                    if (!user.lastTaskTime) user.lastTaskTime = {};
+                    user.lastTaskTime[type] = new Date().toISOString();
+                    localStorage.setItem('users', JSON.stringify(users));
+                    currentUser.lastTaskTime = user.lastTaskTime;
                 }
                 
                 // 更新任务历史
                 updateTaskHistory();
-                // 更新赚钱榜
-                updateEarningsLeaderboard();
-            }, 1000);
+                updatePendingTasksCount();
+                
+                // 显示提交成功消息
+                document.getElementById('loader-text').textContent = '任务已提交，正在严格审核中...';
+                
+                // 模拟30秒的审核过程
+                setTimeout(async () => {
+                    // 验证截图是否符合要求
+                    const validation = await validateProofImage(imageSrc, type);
+                    
+                    // 更新任务状态
+                    const updatedTasks = JSON.parse(localStorage.getItem('userTasks'));
+                    const taskToUpdate = updatedTasks.find(t => t.id === newTask.id);
+                    if (taskToUpdate) {
+                        taskToUpdate.status = validation.valid ? 'approved' : 'rejected';
+                        taskToUpdate.reviewTime = validation.reviewTime;
+                        localStorage.setItem('userTasks', JSON.stringify(updatedTasks));
+                        
+                        // 如果审核通过，创建收益记录
+                        if (validation.valid) {
+                            const earnings = JSON.parse(localStorage.getItem('earnings'));
+                            earnings.push({
+                                id: Date.now(),
+                                userId: currentUser.id,
+                                type: type,
+                                amount: task.reward,
+                                time: new Date().toISOString(),
+                                taskId: newTask.id
+                            });
+                            
+                            localStorage.setItem('earnings', JSON.stringify(earnings));
+                            
+                            // 更新用户可提现余额
+                            if (user) {
+                                user.withdrawable += task.reward;
+                                localStorage.setItem('users', JSON.stringify(users));
+                                currentUser.withdrawable = user.withdrawable;
+                            }
+                        }
+                        
+                        // 隐藏加载动画
+                        document.getElementById('loader').style.display = 'none';
+                        
+                        // 显示审核结果
+                        if (validation.valid) {
+                            alert('任务已审核通过！奖励已发放到您的账户');
+                        } else {
+                            alert('任务审核未通过：' + validation.message);
+                        }
+                        
+                        // 清空表单
+                        document.getElementById('task-proof').value = '';
+                        document.getElementById('proof-preview').style.display = 'none';
+                        document.getElementById('task-remark').value = '';
+                        
+                        // 重置上传区域显示
+                        const uploadArea = document.querySelector('.upload-area');
+                        uploadArea.innerHTML = `
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="upload-text">点击上传截图</div>
+                            <div style="font-size: 12px; color: var(--light-text);" id="proof-requirement">${type === 'follow' ? '请上传快手关注截图' : '请上传游戏游玩记录截图'}</div>
+                        `;
+                        
+                        // 更新任务历史
+                        updateTaskHistory();
+                        // 更新赚钱榜
+                        updateEarningsLeaderboard();
+                        // 更新待审核任务数量
+                        updatePendingTasksCount();
+                        // 更新用户显示
+                        updateUserDisplay();
+                    }
+                }, 100); // 实际应用中这里应该是30000(30秒)，但为了演示设置为100毫秒
+            };
+            
+            reader.readAsDataURL(proofFile);
         }
         
         // 更新任务历史
@@ -1511,11 +2113,12 @@
                         <div style="font-size:12px;">
                             状态: <span class="status-label ${'status-' + t.status}">${
                                 t.status === 'approved' ? '已通过' : 
-                                t.status === 'rejected' ? '已拒绝' : '待审核'
+                                t.status === 'rejected' ? '已拒绝' : '审核中'
                             }</span>
+                            ${t.status === 'rejected' ? `<div style="color:var(--danger-color);font-size:12px;">原因: ${t.rejectReason || '截图不符合要求'}</div>` : ''}
                         </div>
                     </div>
-                    <div class="user-earnings">¥${t.reward.toFixed(2)}</div>
+                    <div class="user-earnings">${t.status === 'approved' ? `¥${t.reward.toFixed(2)}` : '--'}</div>
                 </div>
             `).join('');
             
