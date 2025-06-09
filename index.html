@@ -2,2188 +2,828 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星烁游戏推广系统 - 智能审核平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星烁游戏推广任务平台</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #ff6b00;
-            --secondary-color: #ff3b00;
-            --light-bg: #fff8f0;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --light-text: #999999;
-            --border-color: #ffe0cc;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ff5e62;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
         }
         
         body {
             font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
             margin: 0;
             padding: 0;
-            color: var(--text-color);
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-            background-color: #f8f9fa;
+            min-height: 100vh;
         }
         
-        /* 优化背景动画性能 */
-        .bg-animation {
-            position: fixed;
+        .navbar {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(135deg, #fff8f0 0%, #ffe6d6 100%);
-            overflow: hidden;
-            will-change: transform;
-        }
-        
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 107, 0, 0.1);
-            animation: float 15s infinite linear;
-            will-change: transform;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-1000px) rotate(720deg);
-                opacity: 0;
-            }
-        }
-        
-        .container {
-            max-width: 100%;
-            padding: 15px;
-            padding-bottom: 70px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            position: relative;
-            backdrop-filter: blur(5px);
-            background: rgba(255, 107, 0, 0.9);
-            border-bottom: 3px solid rgba(255,255,255,0.2);
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 22px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
-        }
-        
-        .user-header {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid rgba(255,255,255,0.5);
-        }
-        
-        .user-avatar:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,0.4);
-        }
-        
-        .tab-bar {
-            display: flex;
-            background: white;
-            position: fixed;
-            bottom: 0;
-            left: 0;
             right: 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 100;
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.95);
-            border-top: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .tab-item {
-            flex: 1;
-            text-align: center;
-            padding: 12px 0;
-            color: var(--light-text);
-            font-size: 14px;
-            transition: all 0.3s;
-            position: relative;
-        }
-        
-        .tab-item.active {
-            color: var(--primary-color);
-            font-weight: bold;
-            transform: translateY(-5px);
-        }
-        
-        .tab-item i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 4px;
-            transition: all 0.3s;
-        }
-        
-        .tab-item.active i {
-            transform: scale(1.2);
-        }
-        
-        .tab-item .badge {
-            position: absolute;
-            top: 5px;
-            right: 20%;
-            background-color: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .banner {
-            background: linear-gradient(135deg, var(--secondary-color), #ff1a00);
-            color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 8px rgba(255, 59, 0, 0.3);
-            animation: pulse 2s infinite;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Q50,80 0,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100%;
+            opacity: 0.2;
         }
         
         .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.95);
-            position: relative;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
             overflow: hidden;
+            background: white;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
         
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-        
-        .money-card {
-            background: linear-gradient(135deg, #fff4e6, #ffebcc);
-            border-left: 4px solid var(--primary-color);
-            animation: glow 2s infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { box-shadow: 0 0 5px rgba(255,107,0,0.3); }
-            to { box-shadow: 0 0 15px rgba(255,107,0,0.5); }
-        }
-        
-        .highlight {
-            color: var(--secondary-color);
-            font-weight: bold;
-        }
-        
-        .big-money {
-            font-size: 24px;
-            color: #ff1a00;
-            font-weight: bold;
-            text-align: center;
-            margin: 10px 0;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .btn {
-            display: block;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .card-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             color: white;
-            text-align: center;
-            padding: 12px;
-            border-radius: 25px;
-            margin: 20px 0;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
-            border: none;
-            width: 100%;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            font-weight: 600;
+            border-bottom: none;
+            padding: 1rem 1.5rem;
         }
         
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 15px rgba(255, 107, 0, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .btn:after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 200%;
-            height: 200%;
-            background: rgba(255,255,255,0.2);
-            transform: rotate(30deg);
-            transition: all 0.3s;
-        }
-        
-        .btn:hover:after {
-            left: 100%;
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #495057);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #28a745, #218838);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-        }
-        
-        .steps {
-            margin: 20px 0;
-        }
-        
-        .step {
-            display: flex;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-        
-        .step-num {
-            background: var(--primary-color);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 24px;
-            margin-right: 10px;
-            flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(255,107,0,0.3);
-        }
-        
-        .user-list {
-            margin: 15px 0;
-        }
-        
-        .user-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed #ffd9cc;
-            transition: all 0.3s;
-        }
-        
-        .user-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .user-avatar-small {
+        .task-icon {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            background: #ffebcc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            color: var(--primary-color);
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .user-info {
-            flex-grow: 1;
-        }
-        
-        .user-earnings {
-            color: var(--secondary-color);
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 15px;
-            color: var(--light-text);
-            font-size: 12px;
-            margin-top: 20px;
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.7);
             border-radius: 10px;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .price-list {
-            margin: 15px 0;
-        }
-        
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #ffe6d6;
-            transition: all 0.3s;
-        }
-        
-        .price-item:hover {
-            background: rgba(255,235,204,0.3);
-        }
-        
-        .qr-code {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .qr-code img {
-            width: 150px;
-            height: 150px;
-            border: 1px solid #eee;
-            padding: 5px;
-            background: white;
-            transition: all 0.3s;
-        }
-        
-        .qr-code img:hover {
-            transform: scale(1.05);
-        }
-        
-        /* 图片预览 */
-        .proof-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
-            border-radius: 5px;
-            display: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            border: 1px solid #eee;
-        }
-        
-        .proof-preview:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        /* 音乐控制 */
-        .music-control {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.8);
-            padding: 5px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-        
-        .music-control:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,1);
-        }
-        
-        /* 规则介绍样式 */
-        .rules-container {
-            margin: 15px 0;
-        }
-        
-        .rule-item {
-            margin-bottom: 10px;
-            padding-left: 15px;
-            position: relative;
-            transition: all 0.3s;
-        }
-        
-        .rule-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .rule-item:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        /* 任务提交表单 */
-        .task-form {
-            margin-top: 15px;
-        }
-        
-        .task-proof-container {
-            margin-top: 10px;
-        }
-        
-        .task-proof-required {
-            color: red;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        
-        /* 统计信息 */
-        .stats-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .stat-card {
-            flex: 1;
-            min-width: 120px;
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.95);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 5px 0;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: var(--light-text);
-        }
-        
-        /* 提现记录 */
-        .withdraw-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            transition: all 0.3s;
-        }
-        
-        .withdraw-item:hover {
-            background: rgba(255,235,204,0.3);
-        }
-        
-        .withdraw-status {
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-failed {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        /* QQ群提醒 */
-        .qq-group-notice {
-            background: #f8f9fa;
-            border-left: 4px solid #17a2b8;
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 0 5px 5px 0;
-            animation: slideIn 0.5s;
-            backdrop-filter: blur(5px);
-            background: rgba(248,249,250,0.9);
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* 用户须知弹窗 */
-        .notice-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1002;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .notice-content {
-            background: white;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 20px;
-            animation: fadeIn 0.3s;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .notice-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-            text-align: center;
-        }
-        
-        .notice-item {
-            margin-bottom: 10px;
-            padding-left: 15px;
-            position: relative;
-        }
-        
-        .notice-item:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        .notice-confirm-btn {
-            background: var(--primary-color);
             color: white;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+        
+        .reward-badge {
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .weekly-badge {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .notice-confirm-btn:hover {
-            background: var(--secondary-color);
-        }
-        
-        /* 图片上传区域 */
-        .upload-area {
-            border: 2px dashed #ffd9cc;
             border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.7);
-            position: relative;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
         }
         
-        .upload-area:hover {
-            border-color: var(--primary-color);
-            background: #fff8f0;
-            transform: translateY(-3px);
+        .btn-primary:hover {
+            background: linear-gradient(to right, #5a0db4, #1c6afc);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
         }
         
-        .upload-area i {
-            display: block;
-            font-size: 40px;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            transition: all 0.3s;
+        .partner-section {
+            background: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
         
-        .upload-area:hover i {
+        .partner-logo-container {
+            color: #6a11cb;
+            transition: all 0.3s ease;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .partner-logo-container:hover {
+            background: rgba(106, 17, 203, 0.1);
             transform: scale(1.1);
         }
-        
-        .upload-text {
-            font-size: 14px;
-            color: var(--light-text);
-        }
-        
-        /* 任务记录样式 */
-        .task-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-        }
-        
-        .task-item:hover {
-            background: rgba(255,235,204,0.3);
-        }
-        
-        /* 审核状态标签 */
-        .status-label {
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            display: inline-block;
-        }
-        
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-approved {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        /* 表单控件 */
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ffe6d6;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.8);
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 5px rgba(255,107,0,0.3);
-        }
-        
-        /* 用户菜单 */
-        .user-menu {
-            display: none;
-            position: absolute;
-            right: 15px;
-            top: 70px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            width: 150px;
-            animation: fadeIn 0.3s;
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.95);
-        }
-        
-        .user-menu div {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .user-menu div:hover {
-            background: #fff8f0;
+
+        .partner-logo-container i {
             color: var(--primary-color);
         }
-        
-        /* 模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1001;
-            justify-content: center;
-            align-items: center;
+
+        .partner-logo-container p {
+            color: var(--dark-color);
+            font-weight: 500;
+            margin-bottom: 0;
         }
         
-        .modal-content {
-            background: white;
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .contact-box {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            padding: 20px;
-            animation: fadeIn 0.3s;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            backdrop-filter: blur(5px);
-            background: rgba(255,255,255,0.95);
+            padding: 1.5rem;
+            margin-top: 1rem;
         }
         
-        /* 加载动画 */
-        .loader {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1003;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .loader-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 80%;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 15px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* 审核详情 */
-        .audit-details {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .audit-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        
-        .audit-pass {
-            color: var(--success-color);
-        }
-        
-        .audit-fail {
-            color: var(--danger-color);
-        }
-        
-        /* 响应式调整 */
-        @media (max-width: 480px) {
-            .stat-card {
-                min-width: 100%;
-            }
-            
-            .banner {
-                font-size: 14px;
-            }
-            
-            .big-money {
-                font-size: 20px;
-            }
-        }
-        
-        /* 高级动画效果 */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        
-        .shake {
-            animation: shake 0.5s;
-        }
-        
-        /* 高级进度条 */
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-            margin: 10px 0;
+        .task-detail-modal .modal-content {
+            border-radius: 15px;
             overflow: hidden;
+            border: none;
         }
         
-        .progress-bar {
+        .task-detail-modal .modal-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+        }
+        
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 5px;
-            transition: width 0.5s ease;
-            position: relative;
-            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
         }
         
-        .progress-bar::after {
-            content: "";
+        .star {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                rgba(255,255,255,0.1) 0%, 
-                rgba(255,255,255,0.3) 50%, 
-                rgba(255,255,255,0.1) 100%);
-            animation: progressShine 2s infinite;
-        }
-        
-        @keyframes progressShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* 高级提示框 */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
             opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
         }
         
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: var(--opacity); }
         }
         
-        /* 高级标签 */
-        .tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-right: 5px;
-            margin-bottom: 5px;
+        .tech-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: rotate linear infinite;
         }
         
-        .tag-primary {
-            background: rgba(255,107,0,0.1);
-            color: var(--primary-color);
-            border: 1px solid rgba(255,107,0,0.3);
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
-        .tag-success {
-            background: rgba(40,167,69,0.1);
-            color: var(--success-color);
-            border: 1px solid rgba(40,167,69,0.3);
+        .floating {
+            animation: floating 3s ease-in-out infinite;
         }
         
-        .tag-danger {
-            background: rgba(220,53,69,0.1);
-            color: var(--danger-color);
-            border: 1px solid rgba(220,53,69,0.3);
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .platform-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .coming-soon {
+            background: linear-gradient(45deg, #f5f7fa, #e4e8f0);
+            border: 2px dashed #ccc;
+        }
+        
+        .promoter-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .online-promoter-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border: 2px solid var(--primary-color);
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- 背景动画 -->
-    <div class="bg-animation" id="bg-animation"></div>
-    
-    <!-- 加载动画 -->
-    <div class="loader" id="loader">
-        <div class="loader-content">
-            <div class="spinner"></div>
-            <div id="loader-text">正在提交任务，请稍候...</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 用户须知弹窗 -->
-    <div class="notice-modal" id="notice-modal">
-        <div class="notice-content">
-            <div class="notice-title"><i class="fas fa-exclamation-circle"></i> 用户须知</div>
-            <div class="notice-item">请确保您上传的截图清晰可见，包含完整的快手关注或游戏下载界面</div>
-            <div class="notice-item">同一设备和快手账号两天内只能完成一次下载任务，请勿重复提交否则账号封禁处理</div>
-            <div class="notice-item">每月1号和16号提现，提现需联系QQ: 3965723380</div>
-            <div class="notice-item">禁止使用任何作弊手段，违规者将封号处理</div>
-            <div class="notice-item">推广时请遵守平台规则，不得发布违规内容</div>
-            <div class="notice-item">每日推广人数无上限，多劳多得</div>
-            <div class="notice-item">每次只能提交一个人的申请，请确保截图真实有效</div>
-            <div class="notice-item">如有疑问，请及时联系客服QQ: 3965723380</div>
-            <button class="notice-confirm-btn" onclick="hideNotice()">我已阅读并同意</button>
-        </div>
-    </div>
-    
-    <!-- 音乐控制按钮 -->
-    <div class="music-control" id="music-control" onclick="toggleMusic()">
-        <i class="fas fa-music"></i>
-    </div>
-    
-    <!-- 背景音乐 - 轻音乐版本 -->
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" type="audio/mpeg">
-    </audio>
-    
-    <!-- 点击音效 -->
-    <audio id="click-sound">
-        <source src="https://www.soundjay.com/buttons/sounds/button-09.mp3" type="audio/mpeg">
-    </audio>
-    
-    <header>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <h1>星烁游戏推广系统</h1>
-            <p>快手账号推广赚钱平台</p>
-            <div class="user-header">
-                <span id="username-display">未登录</span>
-                <div class="user-avatar" id="user-avatar" onclick="toggleUserMenu()"><i class="fas fa-user"></i></div>
-            </div>
-        </div>
-    </header>
-    
-    <div class="user-menu" id="user-menu" style="display: none;">
-        <div onclick="showLoginForm()"><i class="fas fa-sign-in-alt"></i> 用户登录</div>
-        <div id="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出登录</div>
-    </div>
-    
-    <!-- 登录表单 -->
-    <div class="modal" id="login-modal">
-        <div class="modal-content">
-            <h2 style="margin-top: 0;">用户登录</h2>
-            <div class="form-group">
-                <label>手机号码</label>
-                <input type="text" id="login-phone" class="form-control" placeholder="请输入手机号">
-            </div>
-            <div class="form-group">
-                <label>验证码</label>
-                <div style="display: flex;">
-                    <input type="text" id="login-code" class="form-control" placeholder="请输入验证码" style="flex: 1;">
-                    <button id="send-code-btn" style="margin-left: 10px; padding: 0 10px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">获取验证码</button>
-                </div>
-            </div>
-            <button class="btn" onclick="userLogin()">登录</button>
-            <button style="margin-top: 10px; width: 100%; padding: 10px; background: #f0f0f0; border: none; border-radius: 5px; cursor: pointer;" onclick="hideLoginForm()">取消</button>
-        </div>
-    </div>
-    
-    <!-- 提现模态框 -->
-    <div class="modal" id="withdraw-modal">
-        <div class="modal-content">
-            <h2 style="margin-top: 0;">申请提现</h2>
-            <div class="form-group">
-                <label>提现金额</label>
-                <input type="number" class="form-control" id="withdraw-amount" placeholder="请输入提现金额">
-            </div>
-            <div class="form-group">
-                <label>提现方式</label>
-                <select class="form-control" id="withdraw-method">
-                    <option value="wechat">微信支付</option>
-                    <option value="alipay">支付宝</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>收款账号</label>
-                <input type="text" class="form-control" id="withdraw-account" placeholder="请输入收款账号">
-            </div>
-            <div style="font-size: 12px; color: var(--light-text); margin-bottom: 15px;">
-                提现需联系QQ: 3965723380 处理
-            </div>
-            <button class="btn" onclick="submitWithdraw()">提交提现申请</button>
-            <button style="margin-top: 10px; width: 100%; padding: 10px; background: #f0f0f0; border: none; border-radius: 5px; cursor: pointer;" onclick="hideWithdrawModal()">取消</button>
-        </div>
-    </div>
-    
-    <!-- 主内容区域 -->
-    <div class="container" id="main-content">
-        <!-- QQ群提醒 -->
-        <div class="qq-group-notice" id="qq-group-notice">
-            <strong><i class="fas fa-info-circle"></i> 提现提醒：</strong>提现请添加QQ群主: <span class="highlight">3965723380</span> 联系处理。
-        </div>
-        
-        <!-- 首页 -->
-        <div id="home-tab">
-            <div class="banner">
-                🎉 今日已有<span id="today-users">218</span>人参与，最高赚¥<span id="max-earnings">386</span>！立即加入！ 🎉
-            </div>
-            
-            <div class="card money-card">
-                <div class="big-money">关注=0.1元 &nbsp; 下载=5元</div>
-                <div style="text-align: center;">每推广1人下载游戏，立得5元现金奖励！</div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-money-bill-wave"></i> 收益明细</h2>
-                <div class="price-list">
-                    <div class="price-item">
-                        <span>快手账号关注</span>
-                        <span class="highlight">+0.1元/人</span>
-                    </div>
-                    <div class="price-item">
-                        <span>下载安装游戏</span>
-                        <span class="highlight">+5元/人</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-mobile-alt"></i> 如何参与？</h2>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-num">1</div>
-                        <div>关注【星烁游戏】快手号: 4713343918</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">2</div>
-                        <div>转发指定作品给你的好友或群聊</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">3</div>
-                        <div>好友完成关注/下载后，提交截图审核</div>
-                    </div>
-                </div>
-                
-                <h3 style="margin-top: 20px;">推广作品链接</h3>
-                <div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <p><a href="https://v.kuaishou.com/2C2bXWB" target="_blank">https://v.kuaishou.com/2C2bXWB</a></p>
-                    <p><a href="https://v.kuaishou.com/2B3koRE" target="_blank">https://v.kuaishou.com/2B3koRE</a></p>
-                    <p><a href="https://v.kuaishou.com/2AKRu3o" target="_blank">https://v.kuaishou.com/2AKRu3o</a></p>
-                    <p><a href="https://v.kuaishou.com/2CaQ8T7" target="_blank">https://v.kuaishou.com/2CaQ8T7</a></p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-trophy"></i> 今日赚钱榜</h2>
-                <div class="user-list" id="earnings-leaderboard">
-                    <!-- 动态生成赚钱榜 -->
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-lightbulb"></i> 推广技巧</h2>
-                <ul>
-                    <li>分享到微信群、朋友圈，附上你的专属邀请码</li>
-                    <li>告诉好友"关注就有钱，下载赚5元"</li>
-                    <li>每天坚持推广3小时，月入3000+很轻松</li>
-                    <li>组建团队，获得下级20%收益分成</li>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-star me-2"></i>星烁任务平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tasks">任务中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">联系我们</a>
+                    </li>
                 </ul>
             </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-info-circle"></i> 活动规则</h2>
-                <div class="rules-container">
-                    <div class="rule-item">收益在每月的1号和16号提现，需联系QQ群主: 3965723380 处理</div>
-                    <div class="rule-item">每次只能提交一个人的申请，确保截图真实有效</div>
-                    <div class="rule-item">同一快手账号两天内只能做一次下载任务</div>
-                    <div class="rule-item">可以找朋友帮忙做任务，但必须使用不同的快手账号</div>
-                    <div class="rule-item">提交关注任务需提供快手关注截图</div>
-                    <div class="rule-item">提交游戏任务需提供5分钟以上的游玩记录截图</div>
-                    <div class="rule-item">禁止刷量，违规者封号处理</div>
-                    <div class="rule-item">活动截止时间：2027年6月4日</div>
-                </div>
+        </div>
+    </nav>
+
+    <!-- 头部区域 -->
+    <header class="header text-center position-relative">
+        <div class="stars" id="stars-container"></div>
+        <div class="container position-relative">
+            <div class="platform-icon animate__animated animate__bounceIn">
+                <img src="https://img.icons8.com/fluency/48/000000/star.png" alt="星烁平台图标" width="48" height="48">
             </div>
-            
-            <button class="btn" onclick="switchTab('task')"><i class="fas fa-check-circle"></i> 提交任务审核</button>
+            <h1 class="display-4 fw-bold mb-3 animate__animated animate__fadeInDown">星烁推广任务平台</h1>
+            <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">高效 · 稳定 · 高收益 · 即时结算</p>
+            <a href="#tasks" class="btn btn-light btn-lg rounded-pill px-4 animate__animated animate__fadeInUp animate__delay-2s">立即开始任务</a>
+        </div>
+    </header>
+
+    <!-- 任务中心 -->
+    <section class="container py-5" id="tasks">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">推广任务中心</h2>
+            <p class="text-muted">选择您感兴趣的任务，开始赚取收益</p>
         </div>
         
-        <!-- 我的收益 -->
-        <div id="earnings-tab" style="display: none;">
-            <div class="card">
-                <h2><i class="fas fa-wallet"></i> 我的钱包</h2>
-                <div style="text-align: center; margin: 20px 0;">
-                    <div style="font-size: 14px; color: var(--light-text);">可提现金额</div>
-                    <div style="font-size: 36px; font-weight: bold; color: var(--primary-color);" id="withdrawable-amount">¥0.00</div>
-                </div>
-                
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-value" id="today-earnings">¥0</div>
-                        <div class="stat-label">今日收益</div>
+        <div class="row">
+            <!-- 即梦AI拉新任务 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h5 class="mb-0">即梦AI拉新任务</h5>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="month-earnings">¥0</div>
-                        <div class="stat-label">本月收益</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="total-earnings">¥0</div>
-                        <div class="stat-label">累计收益</div>
-                    </div>
-                </div>
-                
-                <button class="btn" onclick="showWithdrawModal()" id="withdraw-btn" disabled><i class="fas fa-money-bill-wave"></i> 申请提现</button>
-                <div style="text-align: center; font-size: 12px; color: var(--light-text);">提现需联系QQ: 3965723380</div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-chart-line"></i> 收益明细</h2>
-                <div id="earnings-details">
-                    <div style="text-align: center; padding: 30px; color: var(--light-text);">
-                        <i class="fas fa-wallet" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <p>暂无收益记录</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 任务提交 -->
-        <div id="task-tab" style="display: none;">
-            <div class="card">
-                <h2><i class="fas fa-tasks"></i> 提交推广任务</h2>
-                <div class="task-form">
-                    <div class="form-group">
-                        <label>推广方式</label>
-                        <select class="form-control" id="task-type">
-                            <option value="follow">快手账号关注</option>
-                            <option value="download">游戏下载</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>推广人数</label>
-                        <input type="number" class="form-control" id="task-count" value="1" min="1" max="1" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>推广截图证明 <span class="task-proof-required">*必填</span></label>
-                        <div class="task-proof-container">
-                            <div class="upload-area" onclick="document.getElementById('task-proof').click()">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <div class="upload-text">点击上传截图</div>
-                                <div style="font-size: 12px; color: var(--light-text);" id="proof-requirement">请上传快手关注截图</div>
+                    <div class="card-body">
+                        <p class="card-text">推广即梦AI产品，每成功邀请一位新用户即可获得奖励。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="reward-badge me-2">奖励: ¥1.00/人</span>
+                                <span class="weekly-badge">周结</span>
                             </div>
-                            <input type="file" id="task-proof" accept="image/*" style="display: none;" onchange="previewProof()">
-                            <img id="proof-preview" class="proof-preview" alt="截图预览">
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="即梦AI拉新">查看详情</button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>备注说明</label>
-                        <textarea class="form-control" id="task-remark" rows="3" placeholder="可填写推广详情"></textarea>
-                    </div>
-                    <button class="btn" id="submit-task-btn" onclick="submitTask()"><i class="fas fa-paper-plane"></i> 提交审核</button>
                 </div>
             </div>
             
-            <div class="card">
-                <h2><i class="fas fa-history"></i> 任务记录</h2>
-                <div id="task-history">
-                    <div style="text-align: center; padding: 30px; color: var(--light-text);">
-                        <i class="fas fa-history" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <p>暂无任务记录</p>
+            <!-- 京东快递领券 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5 class="mb-0">京东快递领券</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">推广京东快递优惠券，用户成功领取后即可获得奖励。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="reward-badge me-2">奖励: ¥0.50/人</span>
+                                <span class="weekly-badge">周结</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="京东快递领券">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 美团好友任务 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h5 class="mb-0">美团好友任务</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">邀请好友注册美团并完成首单，即可获得丰厚奖励。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="reward-badge me-2">奖励: ¥2.00/人</span>
+                                <span class="weekly-badge">周结</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="美团好友">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 咸鱼1毛购 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h5 class="mb-0">咸鱼1毛购</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">推广咸鱼1毛购活动，用户成功参与即可获得奖励。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="reward-badge me-2">奖励: ¥3.00/人</span>
+                                <span class="weekly-badge">周结</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="咸鱼1毛购">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 淘宝回溜购 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h5 class="mb-0">淘宝回溜购</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">推广淘宝回溜购活动，用户成功购买后即可获得高额奖励。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="reward-badge me-2">奖励: ¥10.00/人</span>
+                                <span class="weekly-badge">周结</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="淘宝回溜购">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 线下推广员 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 promoter-card">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h5 class="mb-0">线下推广员招募</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">成为我们的线下推广员，月基础工资3000元，业绩好工资更高！</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="reward-badge">月薪: ¥3000+</span>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="线下推广员">申请加入</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 线上推广员 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 online-promoter-card">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="task-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h5 class="mb-0">线上推广员招募</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">成为线上推广员，月薪2000元基础工资，每天完成业绩指标即可。</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="reward-badge">月薪: ¥2000</span>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="线上推广员">申请加入</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 任务陆续上架中 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 coming-soon">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
+                        <i class="fas fa-plus-circle fa-3x mb-3 text-muted"></i>
+                        <h5 class="text-muted">更多任务</h5>
+                        <p class="text-muted">陆续上架中...</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- 底部导航栏 -->
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="switchTab('home')">
-            <i class="fas fa-home"></i>
-            <span>首页</span>
+    </section>
+
+    <!-- 合作伙伴 -->
+    <section class="partner-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h3 class="fw-bold">战略合作伙伴</h3>
+                <p class="text-muted">与行业领先企业深度合作，为您提供优质任务</p>
+            </div>
+            
+            <div class="row justify-content-center align-items-center">
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fab fa-taobao fa-3x"></i>
+                        <p class="mt-2">淘宝</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fas fa-shopping-bag fa-3x"></i>
+                        <p class="mt-2">京东</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fas fa-utensils fa-3x"></i>
+                        <p class="mt-2">美团</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fas fa-fish fa-3x"></i>
+                        <p class="mt-2">闲鱼</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fas fa-motorcycle fa-3x"></i>
+                        <p class="mt-2">饿了么</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 text-center mb-4">
+                    <div class="partner-logo-container">
+                        <i class="fab fa-tiktok fa-3x"></i>
+                        <p class="mt-2">抖音</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="tab-item" onclick="switchTab('earnings')">
-            <i class="fas fa-wallet"></i>
-            <span>我的收益</span>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="container py-5" id="contact">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="fw-bold mb-4">联系我们</h2>
+                <p class="lead mb-5">如有任何问题或需要对接任务，请联系我们的管理员</p>
+                
+                <div class="contact-box text-start animate__animated animate__fadeInUp">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-user-tie me-2"></i>管理员QQ</h5>
+                        <p class="ms-4">3965723380</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users me-2"></i>交流群</h5>
+                        <p class="ms-4">1053807568</p>
+                    </div>
+                    <div>
+                        <h5><i class="fas fa-info-circle me-2"></i>注意事项</h5>
+                        <ul class="ms-4">
+                            <li>所有任务需联系管理员对接</li>
+                            <li>任务奖励每日/周结算</li>
+                            <li>严禁作弊行为，一经发现永久封号</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="tab-item" onclick="switchTab('task')">
-            <i class="fas fa-tasks"></i>
-            <span>任务提交</span>
-            <div class="badge" id="pending-tasks-badge" style="display: none;">0</div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">© 2025 星烁推广任务平台. 保留所有权利.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-white me-3"><i class="fab fa-qq"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-weixin"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-weibo"></i></a>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <footer>
-        <p>温馨提示：收益因人而异，多劳多得</p>
-        <p>© 2024-2027 星烁游戏推广平台 版权所有</p>
     </footer>
 
+    <!-- 任务详情模态框 -->
+    <div class="modal fade task-detail-modal" id="taskDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskDetailModalLabel">任务详情</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="taskDetailContent">
+                    <!-- 内容将通过JavaScript动态加载 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">联系管理员接单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 科技感背景元素 -->
+    <div id="tech-background">
+        <!-- 这些元素将通过JavaScript动态生成 -->
+    </div>
+
+    <!-- 脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 初始化数据存储
-        function initializeStorage() {
-            // 检查是否已有数据，如果没有才初始化
-            if (!localStorage.getItem('users')) {
-                localStorage.setItem('users', JSON.stringify([]));
+        // 任务详情数据
+        const taskDetails = {
+            "即梦AI拉新": {
+                title: "即梦AI拉新任务",
+                icon: "fa-robot",
+                reward: "¥1.00/人 (周结)",
+                description: "推广即梦AI产品，每成功邀请一位新用户注册并完成验证即可获得1元奖励。每周五统一结算上周奖励。",
+                steps: [
+                    "1. 联系管理员获取专属推广链接",
+                    "2. 将链接分享给好友或发布到社交平台",
+                    "3. 好友通过您的链接注册并完成手机验证",
+                    "4. 系统自动统计有效用户，奖励每周结算"
+                ],
+                notes: [
+                    "每个IP每天最多计算3次有效推广",
+                    "新用户需完成手机验证才算有效",
+                    "奖励每周五统一结算",
+                    "禁止使用任何作弊手段，违者封号处理"
+                ]
+            },
+            "京东快递领券": {
+                title: "京东快递领券任务",
+                icon: "fa-truck",
+                reward: "¥0.50/人 (周结)",
+                description: "推广京东快递优惠券，用户成功领取后即可获得0.5元奖励。每周五统一结算上周奖励。",
+                steps: [
+                    "1. 从管理员处领取推广二维码",
+                    "2. 分享二维码给需要寄快递的用户",
+                    "3. 用户扫描二维码并成功领取优惠券",
+                    "4. 系统自动统计，奖励每周结算"
+                ],
+                notes: [
+                    "每个用户每天只计算一次有效领取",
+                    "优惠券需在7天内使用才计入有效推广",
+                    "奖励每周五统一结算",
+                    "禁止虚假刷单行为"
+                ]
+            },
+            "美团好友": {
+                title: "美团好友任务",
+                icon: "fa-utensils",
+                reward: "¥2.00/人 (周结)",
+                description: "邀请好友注册美团并完成首单，即可获得2元奖励。每周五统一结算上周奖励。",
+                steps: [
+                    "1. 获取您的专属邀请码",
+                    "2. 好友通过您的邀请码注册美团账号",
+                    "3. 好友在7天内完成首单消费",
+                    "4. 奖励将在每周五统一结算"
+                ],
+                notes: [
+                    "首单消费金额需满20元",
+                    "每个手机号仅计算一次有效邀请",
+                    "奖励每周五统一结算",
+                    "奖励可提现至支付宝或微信"
+                ]
+            },
+            "咸鱼1毛购": {
+                title: "咸鱼1毛购任务",
+                icon: "fa-shopping-cart",
+                reward: "¥3.00/人 (周结)",
+                description: "推广咸鱼1毛购活动，用户成功参与即可获得3元奖励。每周五统一结算上周奖励。",
+                steps: [
+                    "1. 获取活动推广链接",
+                    "2. 分享链接给潜在用户",
+                    "3. 用户通过链接参与1毛购活动",
+                    "4. 活动完成后奖励每周结算"
+                ],
+                notes: [
+                    "用户需完成支付0.1元才算有效参与",
+                    "每个账号限参与一次活动",
+                    "奖励每周五统一结算",
+                    "禁止使用虚拟账号刷单"
+                ]
+            },
+            "淘宝回溜购": {
+                title: "淘宝回溜购任务",
+                icon: "fa-store",
+                reward: "¥10.00/人 (周结)",
+                description: "推广淘宝回溜购活动，用户成功购买指定商品后即可获得10元高额奖励。每周五统一结算上周奖励。",
+                steps: [
+                    "1. 联系管理员获取专属商品链接",
+                    "2. 推广商品给目标用户群体",
+                    "3. 用户通过您的链接购买指定商品",
+                    "4. 订单确认收货后奖励每周结算"
+                ],
+                notes: [
+                    "商品价格通常为5元区间",
+                    "需确认收货且无退货才计入有效推广",
+                    "奖励每周五统一结算",
+                    "高价值任务，严禁作弊"
+                ]
+            },
+            "线下推广员": {
+                title: "线下推广员招募",
+                icon: "fa-user-tie",
+                reward: "月薪¥3000+",
+                description: "成为我们的线下推广员，享受月基础工资3000元，业绩好工资更高！",
+                steps: [
+                    "1. 联系管理员提交申请",
+                    "2. 参加简单培训",
+                    "3. 领取推广物料和任务",
+                    "4. 开始线下推广工作"
+                ],
+                notes: [
+                    "月基础工资3000元，上不封顶",
+                    "业绩优秀者可获得额外奖金",
+                    "工作时间灵活，适合兼职",
+                    "需提供基本身份信息",
+                    "需完成每日基本推广指标"
+                ]
+            },
+            "线上推广员": {
+                title: "线上推广员招募",
+                icon: "fa-laptop",
+                reward: "月薪¥2000",
+                description: "成为线上推广员，月薪2000元基础工资，每天完成业绩指标即可。",
+                steps: [
+                    "1. 联系管理员提交申请",
+                    "2. 参加线上培训",
+                    "3. 获取推广工具和资源",
+                    "4. 开始线上推广工作"
+                ],
+                notes: [
+                    "月基础工资2000元",
+                    "需每日完成规定的推广指标",
+                    "工作时间自由，但需保持在线",
+                    "需提供基本身份信息",
+                    "业绩优秀者可获得额外奖金"
+                ]
             }
-            if (!localStorage.getItem('tasks')) {
-                localStorage.setItem('tasks', JSON.stringify([
-                    { id: 1, type: 'follow', name: '快手账号关注', reward: 0.1, desc: '关注星烁游戏快手官方账号' },
-                    { id: 2, type: 'download', name: '下载安装游戏', reward: 5, desc: '下载并安装星烁游戏的指定游戏' }
-                ]));
-            }
-            if (!localStorage.getItem('userTasks')) {
-                localStorage.setItem('userTasks', JSON.stringify([]));
-            }
-            if (!localStorage.getItem('earnings')) {
-                localStorage.setItem('earnings', JSON.stringify([]));
-            }
-            if (!localStorage.getItem('withdrawals')) {
-                localStorage.setItem('withdrawals', JSON.stringify([]));
-            }
-            if (!localStorage.getItem('imageHashes')) {
-                localStorage.setItem('imageHashes', JSON.stringify([]));
-            }
-        }
-        
-        // 创建背景动画粒子
-        function createParticles() {
-            const bgAnimation = document.getElementById('bg-animation');
-            // 减少粒子数量以提高性能
-            const particleCount = Math.min(Math.floor(window.innerWidth / 20), 30);
+        };
+
+        // 初始化模态框内容
+        document.getElementById('taskDetailModal').addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const taskName = button.getAttribute('data-task');
+            const task = taskDetails[taskName];
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // 随机大小
-                const size = Math.random() * 15 + 5;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // 随机位置
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                
-                // 随机透明度
-                particle.style.opacity = Math.random() * 0.3 + 0.1;
-                
-                // 随机动画延迟和持续时间
-                particle.style.animationDelay = `${Math.random() * 15}s`;
-                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
-                
-                bgAnimation.appendChild(particle);
-            }
-        }
-        
-        // 初始化存储
-        initializeStorage();
-        createParticles();
-        
-        // 当前用户状态
-        let currentUser = null;
-        
-        // 音乐状态
-        let isMusicPlaying = false;
-        const bgMusic = document.getElementById('bg-music');
-        const clickSound = document.getElementById('click-sound');
-        
-        // 随机中文名字生成
-        const FIRST_NAMES = ['张', '李', '王', '刘', '陈', '杨', '赵', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗'];
-        const LAST_NAMES = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞'];
-        
-        function generateRandomName() {
-            const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
-            const lastName = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
-            return firstName + lastName;
-        }
-        
-        // 播放点击音效
-        function playClickSound() {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(e => console.log('无法播放点击音效:', e));
-        }
-        
-        // 切换音乐播放状态
-        function toggleMusic() {
-            playClickSound();
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                document.getElementById('music-control').innerHTML = '<i class="fas fa-music"></i>';
-            } else {
-                bgMusic.play().catch(e => console.log('无法播放背景音乐:', e));
-                document.getElementById('music-control').innerHTML = '<i class="fas fa-pause"></i>';
-            }
-            isMusicPlaying = !isMusicPlaying;
-        }
-        
-        // 显示用户须知
-        function showNotice() {
-            document.getElementById('notice-modal').style.display = 'flex';
-        }
-        
-        // 隐藏用户须知
-        function hideNotice() {
-            playClickSound();
-            document.getElementById('notice-modal').style.display = 'none';
-            localStorage.setItem('noticeShown', 'true');
-        }
-        
-        // 预览截图
-        function previewProof() {
-            const file = document.getElementById('task-proof').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('proof-preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    
-                    // 更新上传区域显示
-                    const uploadArea = document.querySelector('.upload-area');
-                    uploadArea.innerHTML = `
-                        <i class="fas fa-check-circle" style="color: green;"></i>
-                        <div class="upload-text">截图已上传</div>
-                        <div style="font-size: 12px; color: var(--light-text);">${file.name}</div>
-                    `;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        // 更新截图要求提示
-        function updateProofRequirement() {
-            const taskType = document.getElementById('task-type').value;
-            const requirementText = taskType === 'follow' 
-                ? '请上传快手关注截图，需清晰显示关注状态' 
-                : '请上传游戏截图，需显示游戏界面和游玩时间';
-            document.getElementById('proof-requirement').textContent = requirementText;
+            document.getElementById('taskDetailModalLabel').textContent = task.title;
             
-            // 重置上传区域显示
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.innerHTML = `
-                <i class="fas fa-cloud-upload-alt"></i>
-                <div class="upload-text">点击上传截图</div>
-                <div style="font-size: 12px; color: var(--light-text);">${requirementText}</div>
+            let content = `
+                <div class="d-flex align-items-center mb-3">
+                    <div class="task-icon me-3">
+                        <i class="fas ${task.icon}"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">${task.title}</h5>
+                        <span class="reward-badge">${task.reward}</span>
+                    </div>
+                </div>
+                
+                <p class="mb-4">${task.description}</p>
+                
+                <h6 class="mb-2"><i class="fas fa-list-ol me-2"></i>任务步骤</h6>
+                <ul class="mb-4 ps-3">
+                    ${task.steps.map(step => `<li>${step}</li>`).join('')}
+                </ul>
+                
+                <h6 class="mb-2"><i class="fas fa-exclamation-circle me-2"></i>注意事项</h6>
+                <ul class="ps-3">
+                    ${task.notes.map(note => `<li>${note}</li>`).join('')}
+                </ul>
             `;
             
-            // 隐藏预览
-            document.getElementById('proof-preview').style.display = 'none';
-        }
-        
-        // DOM加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查是否第一次访问，显示用户须知
-            if (!localStorage.getItem('noticeShown')) {
-                setTimeout(showNotice, 1000);
-            }
-            
-            checkLoginStatus();
-            updateStats();
-            
-            // 为所有按钮添加点击音效
-            document.querySelectorAll('button, [onclick], .tab-item, .user-avatar').forEach(el => {
-                el.addEventListener('click', playClickSound);
-            });
-            
-            // 任务类型变化时更新截图要求
-            document.getElementById('task-type').addEventListener('change', updateProofRequirement);
-            
-            // 初始化截图要求提示
-            updateProofRequirement();
-            
-            // 尝试自动播放音乐
-            bgMusic.volume = 0.3;
-            const playPromise = bgMusic.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // 自动播放成功
-                    isMusicPlaying = true;
-                    document.getElementById('music-control').innerHTML = '<i class="fas fa-pause"></i>';
-                })
-                .catch(error => {
-                    // 自动播放失败，等待用户交互
-                    document.addEventListener('click', function firstInteraction() {
-                        bgMusic.play().then(() => {
-                            isMusicPlaying = true;
-                            document.getElementById('music-control').innerHTML = '<i class="fas fa-pause"></i>';
-                        }).catch(e => console.log('播放失败:', e));
-                        document.removeEventListener('click', firstInteraction);
-                    }, { once: true });
-                });
-            }
-            
-            // 保持音乐播放状态
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden && isMusicPlaying) {
-                    bgMusic.play().catch(e => console.log('恢复播放失败:', e));
-                }
-            });
-            
-            // 每5分钟刷新赚钱榜
-            setInterval(updateEarningsLeaderboard, 5 * 60 * 1000);
-            updateEarningsLeaderboard();
-            
-            // 更新待审核任务数量
-            updatePendingTasksCount();
+            document.getElementById('taskDetailContent').innerHTML = content;
         });
-        
-        // 更新赚钱榜
-        function updateEarningsLeaderboard() {
-            const userTasks = JSON.parse(localStorage.getItem('userTasks'));
-            const users = JSON.parse(localStorage.getItem('users'));
+
+        // 创建星星背景
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const starCount = 50;
             
-            // 获取今日完成的下载任务
-            const todayDownloadTasks = userTasks.filter(t => 
-                t.type === 'download' && 
-                t.status === 'approved' &&
-                new Date(t.submitTime).toDateString() === new Date().toDateString()
-            );
-            
-            // 按用户分组统计
-            const userEarnings = {};
-            todayDownloadTasks.forEach(task => {
-                if (!userEarnings[task.userId]) {
-                    userEarnings[task.userId] = {
-                        count: 0,
-                        earnings: 0
-                    };
-                }
-                userEarnings[task.userId].count += task.count;
-                userEarnings[task.userId].earnings += task.reward;
-            });
-            
-            // 转换为数组并排序
-            let leaderboard = Object.entries(userEarnings)
-                .map(([userId, data]) => ({
-                    userId: parseInt(userId),
-                    count: data.count,
-                    earnings: data.earnings
-                }))
-                .sort((a, b) => b.earnings - a.earnings);
-            
-            // 如果没有真实用户数据，生成一些机器人数据
-            if (leaderboard.length === 0) {
-                leaderboard = [
-                    { userId: -1, count: 86, earnings: 430, isBot: true, name: generateRandomName() },
-                    { userId: -2, count: 52, earnings: 260, isBot: true, name: generateRandomName() },
-                    { userId: -3, count: 38, earnings: 190, isBot: true, name: generateRandomName() }
-                ];
-            } else if (leaderboard.length < 3) {
-                // 补充机器人数据
-                const botCount = 3 - leaderboard.length;
-                for (let i = 0; i < botCount; i++) {
-                    leaderboard.push({
-                        userId: -(i + 4),
-                        count: Math.floor(Math.random() * 30) + 20,
-                        earnings: Math.floor(Math.random() * 150) + 100,
-                        isBot: true,
-                        name: generateRandomName()
-                    });
-                }
-                // 重新排序
-                leaderboard.sort((a, b) => b.earnings - a.earnings);
-            }
-            
-            // 只取前三名
-            leaderboard = leaderboard.slice(0, 3);
-            
-            // 生成HTML
-            let leaderboardHtml = '';
-            
-            leaderboard.forEach((item, index) => {
-                const user = users.find(u => u.id === item.userId);
-                let name, shortName;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
                 
-                if (item.isBot) {
-                    name = item.name;
-                    shortName = name.length > 2 ? name.charAt(0) + '*' : name;
-                } else {
-                    name = user ? user.name : '匿名用户';
-                    shortName = name.length > 2 ? name.charAt(0) + '*' : name;
-                }
+                // 随机大小 (1-3px)
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
                 
-                // 随机生成时间
-                const hoursAgo = 3 - index;
-                const timeText = hoursAgo === 0 ? '30分钟前' : `${hoursAgo}小时前`;
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
                 
-                leaderboardHtml += `
-                    <div class="user-item">
-                        <div class="user-avatar-small">${shortName}</div>
-                        <div class="user-info">
-                            <div>推广${item.count}人下载</div>
-                            <div style="font-size:12px;color:#999;">${timeText}</div>
-                        </div>
-                        <div class="user-earnings">+¥${item.earnings.toFixed(0)}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('earnings-leaderboard').innerHTML = leaderboardHtml;
-        }
-        
-        // 切换标签页
-        function switchTab(tabName) {
-            playClickSound();
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.getElementById('home-tab').style.display = 'none';
-            document.getElementById('earnings-tab').style.display = 'none';
-            document.getElementById('task-tab').style.display = 'none';
-            
-            document.getElementById(tabName + '-tab').style.display = 'block';
-            
-            // 找到对应的tab按钮并激活
-            const tabBtns = document.querySelectorAll('.tab-item');
-            tabBtns.forEach(btn => {
-                if (btn.textContent.includes(tabName === 'home' ? '首页' : 
-                                           tabName === 'earnings' ? '收益' : '任务')) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            // 如果是收益或任务页，检查登录状态
-            if ((tabName === 'earnings' || tabName === 'task') && !currentUser) {
-                showLoginForm();
-                switchTab('home');
-            }
-            
-            // 如果是任务页，更新任务历史
-            if (tabName === 'task') {
-                updateTaskHistory();
-            }
-        }
-        
-        // 显示/隐藏用户菜单
-        function toggleUserMenu() {
-            const menu = document.getElementById('user-menu');
-            if (menu.style.display === 'block') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-            }
-        }
-        
-        // 关闭所有弹出层
-        function closeAllPopups() {
-            document.getElementById('user-menu').style.display = 'none';
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('withdraw-modal').style.display = 'none';
-        }
-        
-        // 点击页面其他地方关闭弹出层
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('#user-avatar') && !e.target.closest('#user-menu')) {
-                document.getElementById('user-menu').style.display = 'none';
-            }
-        });
-        
-        // 显示登录表单
-        function showLoginForm() {
-            playClickSound();
-            closeAllPopups();
-            document.getElementById('login-modal').style.display = 'flex';
-        }
-        
-        // 隐藏登录表单
-        function hideLoginForm() {
-            playClickSound();
-            document.getElementById('login-modal').style.display = 'none';
-        }
-        
-        // 显示提现模态框
-        function showWithdrawModal() {
-            playClickSound();
-            if (!currentUser) {
-                showLoginForm();
-                return;
-            }
-            
-            document.getElementById('withdraw-amount').value = '';
-            document.getElementById('withdraw-account').value = '';
-            document.getElementById('withdraw-modal').style.display = 'flex';
-        }
-        
-        // 隐藏提现模态框
-        function hideWithdrawModal() {
-            playClickSound();
-            document.getElementById('withdraw-modal').style.display = 'none';
-        }
-        
-        // 发送验证码
-        document.getElementById('send-code-btn').addEventListener('click', function() {
-            playClickSound();
-            const phone = document.getElementById('login-phone').value;
-            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
-                alert('请输入正确的手机号码');
-                return;
-            }
-            
-            this.disabled = true;
-            let countdown = 60;
-            this.textContent = `${countdown}秒后重试`;
-            
-            const timer = setInterval(() => {
-                countdown--;
-                this.textContent = `${countdown}秒后重试`;
+                // 随机动画参数
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.setProperty('--opacity', Math.random() * 0.5 + 0.3);
+                star.style.animationDelay = `${Math.random() * 5}s`;
                 
-                if (countdown <= 0) {
-                    clearInterval(timer);
-                    this.disabled = false;
-                    this.textContent = '获取验证码';
-                }
-            }, 1000);
-            
-            // 模拟发送验证码
-            alert(`验证码已发送至 ${phone}，测试验证码为：123456`);
-        });
-        
-        // 用户登录
-        function userLogin() {
-            playClickSound();
-            const phone = document.getElementById('login-phone').value;
-            const code = document.getElementById('login-code').value;
-            
-            if (!phone || !code) {
-                alert('请输入手机号和验证码');
-                return;
-            }
-            
-            // 测试验证码为123456
-            if (code !== '123456') {
-                alert('验证码错误');
-                return;
-            }
-            
-            // 查找或创建用户
-            const users = JSON.parse(localStorage.getItem('users'));
-            let user = users.find(u => u.phone === phone);
-            
-            if (!user) {
-                user = {
-                    id: Date.now(),
-                    phone: phone,
-                    name: '用户' + phone.slice(-4),
-                    registerTime: new Date().toISOString(),
-                    earnings: 0,
-                    withdrawable: 0,
-                    lastTaskTime: {},
-                    hasLoggedIn: false
-                };
-                users.push(user);
-                localStorage.setItem('users', JSON.stringify(users));
-            }
-            
-            currentUser = user;
-            
-            updateUserDisplay();
-            hideLoginForm();
-            
-            // 如果是第一次登录，显示欢迎消息
-            if (!user.hasLoggedIn) {
-                alert(`欢迎加入星烁游戏推广平台！您的邀请码是：${user.id}`);
-                user.hasLoggedIn = true;
-                localStorage.setItem('users', JSON.stringify(users));
-            }
-            
-            // 更新待审核任务数量
-            updatePendingTasksCount();
-        }
-        
-        // 退出登录
-        function logout() {
-            playClickSound();
-            currentUser = null;
-            updateUserDisplay();
-            switchTab('home');
-        }
-        
-        // 检查登录状态
-        function checkLoginStatus() {
-            // 这里简化处理，实际应用中应该检查session或token
-            if (currentUser) {
-                updateUserDisplay();
+                container.appendChild(star);
             }
         }
-        
-        // 更新用户显示
-        function updateUserDisplay() {
-            if (currentUser) {
-                document.getElementById('username-display').textContent = currentUser.name;
-                document.getElementById('logout-btn').style.display = 'block';
+
+        // 创建科技感背景元素
+        function createTechBackground() {
+            const container = document.getElementById('tech-background');
+            const circleCount = 5;
+            
+            for (let i = 0; i < circleCount; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'tech-circle position-fixed';
                 
-                // 更新收益数据
-                updateEarningsDisplay();
-                updateTaskHistory();
-            } else {
-                document.getElementById('username-display').textContent = '未登录';
-                document.getElementById('logout-btn').style.display = 'none';
-            }
-        }
-        
-        // 更新收益显示
-        function updateEarningsDisplay() {
-            if (!currentUser) return;
-            
-            const earnings = JSON.parse(localStorage.getItem('earnings'));
-            const userEarnings = earnings.filter(e => e.userId === currentUser.id);
-            
-            // 计算各种收益
-            const todayEarnings = userEarnings
-                .filter(e => new Date(e.time).toDateString() === new Date().toDateString())
-                .reduce((sum, e) => sum + e.amount, 0);
-            
-            const currentMonth = new Date().getMonth();
-            const monthEarnings = userEarnings
-                .filter(e => new Date(e.time).getMonth() === currentMonth)
-                .reduce((sum, e) => sum + e.amount, 0);
-            
-            const totalEarnings = userEarnings.reduce((sum, e) => sum + e.amount, 0);
-            
-            document.getElementById('today-earnings').textContent = `¥${todayEarnings.toFixed(2)}`;
-            document.getElementById('month-earnings').textContent = `¥${monthEarnings.toFixed(2)}`;
-            document.getElementById('total-earnings').textContent = `¥${totalEarnings.toFixed(2)}`;
-            document.getElementById('withdrawable-amount').textContent = `¥${currentUser.withdrawable.toFixed(2)}`;
-            
-            // 更新提现按钮状态
-            document.getElementById('withdraw-btn').disabled = currentUser.withdrawable < 10;
-            
-            // 更新收益明细
-            updateEarningsDetails();
-        }
-        
-        // 更新收益明细
-        function updateEarningsDetails() {
-            const earnings = JSON.parse(localStorage.getItem('earnings'));
-            const userEarnings = earnings.filter(e => e.userId === currentUser.id);
-            
-            if (userEarnings.length === 0) {
-                document.getElementById('earnings-details').innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: var(--light-text);">
-                        <i class="fas fa-wallet" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <p>暂无收益记录</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const detailsHtml = userEarnings.map(e => `
-                <div class="price-item">
-                    <div>
-                        <div>${e.type === 'follow' ? '快手账号关注' : 
-                              e.type === 'download' ? '游戏下载' : '未知任务'}</div>
-                        <div style="font-size:12px;color:#999;">${new Date(e.time).toLocaleString()}</div>
-                    </div>
-                    <div class="highlight">+¥${e.amount.toFixed(2)}</div>
-                </div>
-            `).join('');
-            
-            document.getElementById('earnings-details').innerHTML = detailsHtml;
-        }
-        
-        // 更新待审核任务数量
-        function updatePendingTasksCount() {
-            if (!currentUser) {
-                document.getElementById('pending-tasks-badge').style.display = 'none';
-                return;
-            }
-            
-            const userTasks = JSON.parse(localStorage.getItem('userTasks'));
-            const pendingCount = userTasks.filter(t => 
-                t.userId === currentUser.id && 
-                t.status === 'pending'
-            ).length;
-            
-            if (pendingCount > 0) {
-                document.getElementById('pending-tasks-badge').textContent = pendingCount;
-                document.getElementById('pending-tasks-badge').style.display = 'flex';
-            } else {
-                document.getElementById('pending-tasks-badge').style.display = 'none';
-            }
-        }
-        
-        // 检查截图是否符合要求 - 更严格的验证
-        function validateProofImage(imageSrc, taskType) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = imageSrc;
+                // 随机大小
+                const size = Math.random() * 300 + 100;
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
                 
-                img.onload = function() {
-                    // 更严格的验证逻辑
-                    let isValid = false;
-                    let message = '';
+                // 随机位置
+                circle.style.left = `${Math.random() * 100}%`;
+                circle.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画
+                circle.style.animationDuration = `${Math.random() * 60 + 60}s`;
+                
+                container.appendChild(circle);
+            }
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createTechBackground();
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
                     
-                    // 模拟更严格的检查 - 随机决定是否通过，但通过率更低
-                    if (taskType === 'follow') {
-                        // 关注任务验证更严格
-                        isValid = Math.random() > 0.7; // 只有30%通过率
-                        message = isValid ? '截图验证通过' : '截图不符合快手关注要求，请确保包含完整的快手界面和关注状态';
-                    } else if (taskType === 'download') {
-                        // 下载任务验证更严格
-                        isValid = Math.random() > 0.6; // 只有40%通过率
-                        message = isValid ? '截图验证通过' : '截图不符合游戏下载要求，请确保包含游戏界面和至少5分钟游玩时间';
-                    }
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
                     
-                    // 模拟30秒的审核时间
-                    setTimeout(() => {
-                        resolve({ 
-                            valid: isValid, 
-                            message: message,
-                            reviewTime: new Date().toISOString()
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
                         });
-                    }, 30000); // 30秒 = 30000毫秒
-                };
-                
-                img.onerror = function() {
-                    resolve({ 
-                        valid: false, 
-                        message: '图片加载失败，请重新上传',
-                        reviewTime: new Date().toISOString()
-                    });
-                };
-            });
-        }
-        
-        // 提交任务
-        async function submitTask() {
-            playClickSound();
-            if (!currentUser) {
-                showLoginForm();
-                return;
-            }
-            
-            const type = document.getElementById('task-type').value;
-            const proofFile = document.getElementById('task-proof').files[0];
-            const remark = document.getElementById('task-remark').value;
-            
-            if (!proofFile) {
-                alert('请上传推广截图证明');
-                return;
-            }
-            
-            // 检查用户是否有待审核的任务
-            const userTasks = JSON.parse(localStorage.getItem('userTasks'));
-            const hasPendingTask = userTasks.some(t => 
-                t.userId === currentUser.id && 
-                t.status === 'pending'
-            );
-            
-            if (hasPendingTask) {
-                alert('您已有任务正在审核中，请等待审核完成后再提交新任务');
-                return;
-            }
-            
-            // 显示加载动画
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('loader-text').textContent = '正在提交任务...';
-            
-            // 读取图片文件
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const imageSrc = e.target.result;
-                
-                // 创建临时任务记录，状态为pending
-                const tasks = JSON.parse(localStorage.getItem('tasks'));
-                const task = tasks.find(t => t.type === type);
-                
-                if (!task) {
-                    document.getElementById('loader').style.display = 'none';
-                    alert('任务类型错误');
-                    return;
-                }
-                
-                const newTask = {
-                    id: Date.now(),
-                    userId: currentUser.id,
-                    taskId: task.id,
-                    type: task.type,
-                    count: 1,
-                    status: 'pending',
-                    proof: '已上传',
-                    remark: remark,
-                    submitTime: new Date().toISOString(),
-                    reward: task.reward
-                };
-                
-                userTasks.push(newTask);
-                localStorage.setItem('userTasks', JSON.stringify(userTasks));
-                
-                // 更新用户最后任务时间
-                const users = JSON.parse(localStorage.getItem('users'));
-                const user = users.find(u => u.id === currentUser.id);
-                if (user) {
-                    if (!user.lastTaskTime) user.lastTaskTime = {};
-                    user.lastTaskTime[type] = new Date().toISOString();
-                    localStorage.setItem('users', JSON.stringify(users));
-                    currentUser.lastTaskTime = user.lastTaskTime;
-                }
-                
-                // 更新任务历史
-                updateTaskHistory();
-                updatePendingTasksCount();
-                
-                // 显示提交成功消息
-                document.getElementById('loader-text').textContent = '任务已提交，正在严格审核中...';
-                
-                // 模拟30秒的审核过程
-                setTimeout(async () => {
-                    // 验证截图是否符合要求
-                    const validation = await validateProofImage(imageSrc, type);
-                    
-                    // 更新任务状态
-                    const updatedTasks = JSON.parse(localStorage.getItem('userTasks'));
-                    const taskToUpdate = updatedTasks.find(t => t.id === newTask.id);
-                    if (taskToUpdate) {
-                        taskToUpdate.status = validation.valid ? 'approved' : 'rejected';
-                        taskToUpdate.reviewTime = validation.reviewTime;
-                        localStorage.setItem('userTasks', JSON.stringify(updatedTasks));
-                        
-                        // 如果审核通过，创建收益记录
-                        if (validation.valid) {
-                            const earnings = JSON.parse(localStorage.getItem('earnings'));
-                            earnings.push({
-                                id: Date.now(),
-                                userId: currentUser.id,
-                                type: type,
-                                amount: task.reward,
-                                time: new Date().toISOString(),
-                                taskId: newTask.id
-                            });
-                            
-                            localStorage.setItem('earnings', JSON.stringify(earnings));
-                            
-                            // 更新用户可提现余额
-                            if (user) {
-                                user.withdrawable += task.reward;
-                                localStorage.setItem('users', JSON.stringify(users));
-                                currentUser.withdrawable = user.withdrawable;
-                            }
-                        }
-                        
-                        // 隐藏加载动画
-                        document.getElementById('loader').style.display = 'none';
-                        
-                        // 显示审核结果
-                        if (validation.valid) {
-                            alert('任务已审核通过！奖励已发放到您的账户');
-                        } else {
-                            alert('任务审核未通过：' + validation.message);
-                        }
-                        
-                        // 清空表单
-                        document.getElementById('task-proof').value = '';
-                        document.getElementById('proof-preview').style.display = 'none';
-                        document.getElementById('task-remark').value = '';
-                        
-                        // 重置上传区域显示
-                        const uploadArea = document.querySelector('.upload-area');
-                        uploadArea.innerHTML = `
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <div class="upload-text">点击上传截图</div>
-                            <div style="font-size: 12px; color: var(--light-text);" id="proof-requirement">${type === 'follow' ? '请上传快手关注截图' : '请上传游戏游玩记录截图'}</div>
-                        `;
-                        
-                        // 更新任务历史
-                        updateTaskHistory();
-                        // 更新赚钱榜
-                        updateEarningsLeaderboard();
-                        // 更新待审核任务数量
-                        updatePendingTasksCount();
-                        // 更新用户显示
-                        updateUserDisplay();
                     }
-                }, 100); // 实际应用中这里应该是30000(30秒)，但为了演示设置为100毫秒
-            };
-            
-            reader.readAsDataURL(proofFile);
-        }
-        
-        // 更新任务历史
-        function updateTaskHistory() {
-            if (!currentUser) return;
-            
-            const userTasks = JSON.parse(localStorage.getItem('userTasks'));
-            const tasks = JSON.parse(localStorage.getItem('tasks'));
-            
-            const userTaskHistory = userTasks
-                .filter(t => t.userId === currentUser.id)
-                .map(t => {
-                    const task = tasks.find(task => task.id === t.taskId);
-                    return {
-                        ...t,
-                        taskName: task ? task.name : '未知任务'
-                    };
-                })
-                .sort((a, b) => new Date(b.submitTime) - new Date(a.submitTime));
-            
-            if (userTaskHistory.length === 0) {
-                document.getElementById('task-history').innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: var(--light-text);">
-                        <i class="fas fa-history" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <p>暂无任务记录</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const historyHtml = userTaskHistory.map(t => `
-                <div class="task-item">
-                    <div>
-                        <div><strong>${t.taskName}</strong> × ${t.count}</div>
-                        <div style="font-size:12px;color:#999;">${new Date(t.submitTime).toLocaleString()}</div>
-                        <div style="font-size:12px;">
-                            状态: <span class="status-label ${'status-' + t.status}">${
-                                t.status === 'approved' ? '已通过' : 
-                                t.status === 'rejected' ? '已拒绝' : '审核中'
-                            }</span>
-                            ${t.status === 'rejected' ? `<div style="color:var(--danger-color);font-size:12px;">原因: ${t.rejectReason || '截图不符合要求'}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="user-earnings">${t.status === 'approved' ? `¥${t.reward.toFixed(2)}` : '--'}</div>
-                </div>
-            `).join('');
-            
-            document.getElementById('task-history').innerHTML = historyHtml;
-        }
-        
-        // 提交提现申请
-        function submitWithdraw() {
-            playClickSound();
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const method = document.getElementById('withdraw-method').value;
-            const account = document.getElementById('withdraw-account').value;
-            
-            if (!amount || amount <= 0 || !account) {
-                alert('请输入有效的提现金额和收款账号');
-                return;
-            }
-            
-            if (amount > currentUser.withdrawable) {
-                alert('提现金额不能超过可提现余额');
-                return;
-            }
-            
-            if (amount < 10) {
-                alert('最低提现金额为10元');
-                return;
-            }
-            
-            // 创建提现记录
-            const withdrawals = JSON.parse(localStorage.getItem('withdrawals'));
-            const newWithdrawal = {
-                id: Date.now(),
-                userId: currentUser.id,
-                amount: amount,
-                method: method,
-                account: account,
-                status: 'pending',
-                applyTime: new Date().toISOString(),
-                fee: amount * 0.02,
-                contactQQ: '3965723380'
-            };
-            
-            withdrawals.push(newWithdrawal);
-            localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
-            
-            // 更新用户可提现余额
-            const users = JSON.parse(localStorage.getItem('users'));
-            const user = users.find(u => u.id === currentUser.id);
-            if (user) {
-                user.withdrawable -= amount;
-                localStorage.setItem('users', JSON.stringify(users));
-                currentUser.withdrawable = user.withdrawable;
-                updateUserDisplay();
-            }
-            
-            alert('提现申请已提交，请添加QQ: 3965723380 联系处理');
-            hideWithdrawModal();
-        }
-        
-        // 更新统计数据
-        function updateStats() {
-            // 模拟更新今日参与人数和最高收益
-            document.getElementById('today-users').textContent = Math.floor(Math.random() * 100) + 200;
-            document.getElementById('max-earnings').textContent = Math.floor(Math.random() * 200) + 200;
-        }
+                });
+            });
+        });
     </script>
 </body>
 </html>
